@@ -4,6 +4,24 @@ Mikey Tech Lab is an ESP32-first technology learning project designed for Mikey.
 
 The goal is **technology literacy before programming syntax**. The ESP32 is used as a small interactive science and computing lab: lights, a display, touch/buttons, timers, memory, randomness, sensors, and later wireless communication. Arduino IDE instruction comes later, after the ideas behind the code are familiar.
 
+## Home screen
+
+The target device experience is a single **Mikey Tech Lab** home screen that grows as activities are added:
+
+```text
+MIKEY TECH LAB
+
+🎰 Jackpot
+⚡ Reaction
+🧠 Simon
+🎲 Dice
+🔢 Binary
+🚦 Logic
+🐞 Debug
+```
+
+Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. The current MIKEY-002 firmware boots directly into Jackpot while we qualify the physical hardware; MIKEY-003 introduces the shared home screen and activity launcher.
+
 ## Learning model
 
 Every activity should favor this loop:
@@ -36,9 +54,9 @@ The progression is intentionally conceptual:
 
 ## Current status
 
-The GitHub repository was created with only a placeholder README. The working ESP32 jackpot experiment exists outside this repository and has not yet been migrated with a verified hardware profile. This foundation therefore does **not** guess the board pin map, display driver, touch driver, LED driver, or library versions.
+MIKEY-001 established the curriculum and application contracts. MIKEY-002 adds the first board-specific, uploadable Jackpot baseline for the Elecrow CrowPanel 1.28-inch HMI ESP32 Rotary Display.
 
-MIKEY-002 will capture the exact development module configuration and migrate the validated jackpot sketch as Activity 01.
+The Jackpot baseline intentionally stays separate from the future multi-activity app shell until it compiles in CI and is accepted on the physical device.
 
 ## Repository layout
 
@@ -56,6 +74,10 @@ mikey/
 │   └── DECISIONS.md
 └── firmware/
     ├── README.md
+    ├── jackpot-baseline/
+    │   ├── README.md
+    │   └── JackpotBaseline/
+    │       └── JackpotBaseline.ino
     └── mikey-tech-lab/
         └── src/
             ├── Activity.h
@@ -64,7 +86,7 @@ mikey/
 
 ## Design constraints
 
-- Age-appropriate and adult-guided.
+- Child-focused and adult-guided.
 - Offline-first in the early curriculum.
 - No account, personal-data collection, ads, or cloud dependency in Phase 1.
 - One primary concept per lesson, even when an activity demonstrates several.
@@ -77,13 +99,14 @@ mikey/
 
 Start with [Vision](docs/VISION.md), [Learning Philosophy](docs/LEARNING-PHILOSOPHY.md), and the [Curriculum](docs/CURRICULUM.md). New games should follow [Activity Spec](docs/ACTIVITY-SPEC.md).
 
+For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md) and [Jackpot Baseline](firmware/jackpot-baseline/README.md).
+
 ## Near-term milestone
 
-**MIKEY-002 — Hardware Capture + Jackpot Migration**
+**MIKEY-002 — Hardware Capture + Jackpot Baseline**
 
-1. Record exact ESP32 development module/model.
-2. Record display, touch/button, LED hardware and verified pins.
-3. Record Arduino core, board selection, and required libraries/versions.
-4. Import the last known-good jackpot sketch unchanged as a baseline.
-5. Verify build and device behavior.
-6. Refactor only after the baseline is reproducible.
+1. Compile the baseline against the pinned Arduino dependencies.
+2. Upload it to the physical CrowPanel.
+3. Verify display orientation, clockwise wheel direction, touch stop/start, encoder speed control, 25–1000% range, and the five built-in LEDs.
+4. Record any physical-device correction as evidence.
+5. Freeze the accepted baseline before MIKEY-003 refactors it into the app shell.

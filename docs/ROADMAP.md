@@ -2,37 +2,42 @@
 
 ## MIKEY-001 — Foundation
 
-**Status:** implemented in repository foundation branch.
+**Status:** complete.
 
-Goals:
+Delivered:
 
-- define the project vision;
-- establish concept-before-syntax learning philosophy;
-- define Core Seven curriculum;
-- standardize PLAY / LEARN / CHALLENGE;
-- standardize PREDICT → ACT → OBSERVE → EXPLAIN;
-- establish a hardware abstraction boundary;
-- avoid inventing unverified board details.
-
-Exit criteria:
-
-- documentation is internally consistent;
-- future activities have a reusable specification;
-- firmware contracts do not depend on a specific display/touch/LED library.
+- project vision and concept-before-syntax learning philosophy;
+- Core Seven curriculum;
+- PLAY / LEARN / CHALLENGE modes;
+- PREDICT → ACT → OBSERVE → EXPLAIN learning loop;
+- reusable activity specification;
+- hardware-abstraction direction.
 
 ## MIKEY-002 — Hardware Capture + Jackpot Baseline
 
-Goals:
+**Status:** implementation ready for CI + physical acceptance.
 
-1. Capture exact development module/model and ESP32 variant.
-2. Capture board selection, Arduino core, libraries, and versions.
-3. Capture verified display/touch/LED pin map.
-4. Import the last known-good jackpot sketch without behavioral refactoring.
-5. Build successfully from documented dependencies.
-6. Flash and verify wheel direction, speed range/display, stop input, jackpot position, and light behavior.
-7. Tag the reproducible baseline before refactoring.
+Delivered in this tranche:
 
-Important rule: **baseline first, refactor second**.
+1. Identified the target Elecrow CrowPanel 1.28-inch HMI ESP32 Rotary Display from vendor documentation and prototype dependency fingerprints.
+2. Captured the vendor pin map and Arduino upload configuration.
+3. Pinned a current Arduino toolchain/dependency set.
+4. Added a standalone Jackpot baseline that avoids LVGL and an external CST816D dependency.
+5. Added automated compile validation.
+
+Physical exit criteria:
+
+- firmware compiles in CI;
+- firmware uploads to the physical device;
+- clockwise screen direction verified;
+- touch start/stop verified;
+- encoder speed direction verified;
+- speed 25–1000% verified;
+- five WS2812 LEDs verified;
+- jackpot fixed at the top verified;
+- sustained high-speed operation shows no reset/freeze.
+
+Important rule: **accept the physical baseline before refactoring it into the application shell**.
 
 ## MIKEY-003 — App Shell
 
