@@ -1,66 +1,86 @@
 # Hardware
 
-## Current known capabilities
+## Target development module
 
-The current learning prototype uses an ESP32-family development module with built-in visual/input features sufficient for the existing jackpot experiment: a screen, controllable lights/LEDs, and a screen/button-style interaction used to stop the wheel.
+MIKEY-002 targets the **Elecrow CrowPanel 1.28-inch HMI ESP32 Rotary Display (240×240 IPS Round Touch Knob Screen)**.
 
-The prior prototype work also involved touch/display and LED library setup. Exact component models, pins, board selection, and dependency versions are **not yet recorded in this repository**.
+This identification is supported by the prior prototype dependency fingerprints (`CST816D.h` and `Adafruit_NeoPixel.h`) and Elecrow's published hardware/example configuration. Physical-device upload remains the final acceptance gate.
 
-## Do not guess hardware facts
+## Hardware profile
 
-Before firmware migration, capture the exact working configuration from the development machine and physical module.
-
-Required MIKEY-002 capture:
-
-| Item | Status |
+| Component | Configuration |
 |---|---|
-| Development module manufacturer/model | TODO |
-| ESP32 variant | TODO |
-| Arduino board selection | TODO |
-| ESP32 Arduino core version | TODO |
-| Display controller | TODO |
-| Display resolution/orientation | TODO |
-| Touch controller/input mechanism | TODO |
-| Built-in LED type/count | TODO |
-| LED data/power behavior | TODO |
-| Verified pin map | TODO |
-| Required libraries and versions | TODO |
-| Known-good jackpot sketch commit | TODO |
+| MCU | ESP32-S3 / ESP32-S3R8 family |
+| Flash | 16 MB |
+| PSRAM | 8 MB, OPI |
+| Main display | 1.28-inch 240×240 IPS |
+| Display controller | GC9A01 / GC9A01A |
+| Touch controller | CST816D, I2C address `0x15` |
+| Built-in RGB LEDs | 5 × WS2812 |
+| Rotary encoder | A + B + push switch |
 
-## Verification rule
+## Verified vendor pin map
 
-A hardware value becomes canonical only after it is checked against at least one of:
+| Function | GPIO |
+|---|---:|
+| Display SCLK | 10 |
+| Display MOSI | 11 |
+| Display MISO | not connected |
+| Display DC | 3 |
+| Display CS | 9 |
+| Display RESET | 14 |
+| Screen backlight | 46 |
+| Touch SDA | 6 |
+| Touch SCL | 7 |
+| Touch INT | 5 |
+| Touch RESET | 13 |
+| WS2812 data | 48 |
+| WS2812 count | 5 |
+| Encoder A | 45 |
+| Encoder B | 42 |
+| Encoder switch | 41 |
+| Power indicator | 40 |
+| Display/power enable rails used by vendor example | 1 and 2 |
 
-1. the physical module/manufacturer documentation;
-2. a known-good compiling/running sketch;
-3. the installed board/library configuration that produced the known-good behavior.
+## Arduino upload configuration
 
-## Architecture direction
+Use:
 
-Keep educational activity logic independent from physical hardware where practical.
+- Board: **ESP32S3 Dev Module**
+- Flash Size: **16MB (128Mb)**
+- Partition Scheme: **Huge APP (3MB No OTA/1MB SPIFFS)** for the small Jackpot baseline; Elecrow's newer LVGL example also provides an `elecrow_s3` partition for its larger UI package.
+- PSRAM: **OPI PSRAM**
 
-Target layers:
+### Pinned development dependencies
 
-```text
-Activity / curriculum logic
-        ↓
-Mikey hardware interface
-        ↓
-ESP32 board adapter
-        ↓
-Display / touch / LEDs / sensors / radio
-```
+The Jackpot baseline deliberately avoids LVGL and the external CST816D library. It needs only:
 
-This avoids rewriting every activity if the project later moves to a different ESP32 display module.
+- ESP32 Arduino Core **3.3.8**
+- LovyanGFX **1.2.26**
+- Adafruit NeoPixel **1.15.1**
 
-## Expansion order
+Touch polling for the CST816D is implemented directly in the sketch with `Wire1`, which removes the earlier `CST816D.h: No such file or directory` failure mode.
 
-Do not add hardware merely because the ESP32 supports it. Add hardware when it creates a clear learning experience.
+## Source provenance
 
-Likely progression:
+Hardware values are based on Elecrow's current product wiki, Arduino guide, and official example repository:
 
-1. built-in display/lights/input;
-2. simple external button or potentiometer if useful;
-3. one sensor at a time;
-4. second ESP32 for device-to-device communication;
-5. Wi-Fi/Bluetooth lessons after offline concepts are established.
+- https://elecrow.com/wiki/CrowPanel_1.28inch-HMI_ESP32_Rotary_Display.html
+- https://www.elecrow.com/wiki/1.28_Arduino_LVGL_Rotary_Guide.html
+- https://github.com/Elecrow-RD/CrowPanel-1.28inch-HMI-ESP32-Rotary-Display-240-240-IPS-Round-Touch-Knob-Screen
+
+## Physical-device acceptance gate
+
+Before calling the baseline frozen, verify on the actual module:
+
+- display renders upright;
+- wheel advances clockwise on screen;
+- the top screen position is the jackpot position;
+- touch toggles RUNNING/STOPPED once per press;
+- encoder clockwise increases speed and counter-clockwise decreases it;
+- speed is constrained to 25–1000%;
+- all five built-in LEDs participate in the chase;
+- physical LED chase direction feels consistent with the screen wheel;
+- no spontaneous resets occur during sustained 1000% play.
+
+If any physical behavior differs, correct the board adapter/baseline and record the observation rather than silently changing curriculum logic.

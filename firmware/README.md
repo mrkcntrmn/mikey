@@ -1,14 +1,16 @@
 # Firmware
 
-The firmware directory will contain the device-side Mikey Tech Lab application.
+The firmware directory contains both reproducible hardware baselines and the hardware-independent Mikey Tech Lab application contracts.
 
-## Current state
+## Jackpot baseline
 
-Only hardware-independent contracts are introduced in MIKEY-001. The existing working jackpot sketch has not yet been imported because the repository does not contain the exact validated board configuration, pin map, or dependency versions.
+`jackpot-baseline/JackpotBaseline/JackpotBaseline.ino` is the first uploadable board-specific target.
 
-That is intentional.
+It exists to prove the physical Elecrow board configuration before the game is refactored into the multi-activity app shell.
 
-## Target architecture
+See [`jackpot-baseline/README.md`](jackpot-baseline/README.md) for exact Arduino settings and the physical acceptance checklist.
+
+## Target app architecture
 
 ```text
 Mikey Tech Lab app
@@ -29,7 +31,7 @@ Mikey Tech Lab app
 
 ## Boundary rule
 
-An activity should ask for concepts such as:
+An activity should eventually ask for concepts such as:
 
 - draw text;
 - illuminate logical light N;
@@ -39,6 +41,4 @@ An activity should ask for concepts such as:
 
 It should not need to know which GPIO or controller library makes that happen.
 
-## Next step
-
-See `docs/ROADMAP.md` — MIKEY-002 captures the exact board and migrates Jackpot as the known-good behavioral baseline.
+MIKEY-002 intentionally keeps the standalone baseline board-specific. MIKEY-003 performs the abstraction only after the device behavior is accepted.
