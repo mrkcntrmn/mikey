@@ -4,6 +4,24 @@ Mikey Tech Lab is an ESP32-first technology learning project designed for Mikey.
 
 The goal is **technology literacy before programming syntax**. The ESP32 is used as a small interactive science and computing lab: lights, a display, touch/buttons, timers, memory, randomness, sensors, and later wireless communication. Arduino IDE instruction comes later, after the ideas behind the code are familiar.
 
+## Home screen
+
+The target device experience is a single **Mikey Tech Lab** home screen that grows as activities are added:
+
+```text
+MIKEY TECH LAB
+
+🎰 Jackpot
+⚡ Reaction
+🧠 Simon
+🎲 Dice
+🔢 Binary
+🚦 Logic
+🐞 Debug
+```
+
+Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. The current MIKEY-002 firmware boots directly into Jackpot while we qualify the physical hardware; MIKEY-003 introduces the shared home screen and activity launcher.
+
 ## Learning model
 
 Every activity should favor this loop:
