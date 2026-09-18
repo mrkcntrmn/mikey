@@ -9,10 +9,11 @@ The goal is **technology literacy before programming syntax**. The ESP32 is used
 The target device experience is a single **Mikey Tech Lab** home screen that grows as activities are added:
 
 ```text
-MIKEY TECH LAB
+TECH LAB
+  MIKEY
 
 01 JACKPOT    READY
-02 REACTION   SOON
+02 REACTION   READY
 03 SIMON      SOON
 04 DICE       SOON
 05 BINARY     SOON
@@ -20,7 +21,7 @@ MIKEY TECH LAB
 07 DEBUG      SOON
 ```
 
-Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-003 boots to this home menu. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
+Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-003 completed the shared home menu and app shell. MIKEY-004 adds Reaction Racer PLAY while keeping the accepted MIKEY-002 Jackpot baseline available as a standalone comparison target.
 
 ## Learning model
 
@@ -54,7 +55,7 @@ The progression is intentionally conceptual:
 
 ## Current status
 
-MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 builds the shared home menu and app shell while leaving that baseline file unchanged.
+MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 is active: Reaction Racer PLAY plus home title refinement.
 
 ## Repository layout
 
@@ -101,10 +102,11 @@ For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md
 
 ## Near-term milestone
 
-**MIKEY-003 — App Shell**
+**MIKEY-004 — Reaction Racer**
 
-1. Boot to the child-facing home menu.
-2. Navigate seven activities with the encoder carousel.
-3. Launch Jackpot PLAY from a mode selector.
-4. Keep LEARN / CHALLENGE and future activities explicitly gated as SOON.
-5. Preserve the accepted MIKEY-002 baseline unchanged for regression comparison.
+1. Refine the Home title so `MIKEY` is larger beneath `TECH LAB`.
+2. Promote Reaction to Activity 02 READY with PLAY available.
+3. Measure touch reaction time after a random non-blocking GO cue.
+4. Detect false starts and track session-best measurements.
+5. Generalize activity dispatch and mode menus beyond Jackpot.
+6. Preserve the accepted MIKEY-002 baseline unchanged for regression comparison.

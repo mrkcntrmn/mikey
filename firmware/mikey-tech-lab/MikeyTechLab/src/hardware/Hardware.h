@@ -27,6 +27,8 @@ class Hardware {
 
   virtual void begin() = 0;
   virtual uint32_t nowMs() const = 0;
+  virtual uint32_t randomRange(uint32_t minInclusive,
+                               uint32_t maxExclusive) = 0;
 
   virtual InputFrame pollInput() = 0;
 

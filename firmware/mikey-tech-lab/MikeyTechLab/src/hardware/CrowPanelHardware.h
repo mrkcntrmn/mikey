@@ -16,6 +16,7 @@ class CrowPanelHardware : public Hardware {
 
   void begin() override;
   uint32_t nowMs() const override;
+  uint32_t randomRange(uint32_t minInclusive, uint32_t maxExclusive) override;
   InputFrame pollInput() override;
 
   void clearFrame(uint16_t color = kColorBlack) override;

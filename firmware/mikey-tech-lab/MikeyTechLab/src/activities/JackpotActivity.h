@@ -14,11 +14,10 @@ class JackpotActivity : public Activity {
   const char* name() const override;
 
   void begin(const ActivityContext& context) override;
+  void handleInput(const InputFrame& input) override;
   void update() override;
   void end() override;
-
-  void handleInput(const InputFrame& input);
-  bool exitRequested() const { return exitRequested_; }
+  bool exitRequested() const override { return exitRequested_; }
 
  private:
   static constexpr int kWheelPositions = 12;

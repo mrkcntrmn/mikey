@@ -1,5 +1,7 @@
 #include "CrowPanelHardware.h"
 
+#include <esp_system.h>
+
 namespace mikey {
 
 CrowPanelHardware::DisplayDriver::DisplayDriver() {
@@ -151,6 +153,15 @@ void CrowPanelHardware::begin() {
 }
 
 uint32_t CrowPanelHardware::nowMs() const { return millis(); }
+
+uint32_t CrowPanelHardware::randomRange(uint32_t minInclusive,
+                                        uint32_t maxExclusive) {
+  if (maxExclusive <= minInclusive) {
+    return minInclusive;
+  }
+  return minInclusive +
+         static_cast<uint32_t>(esp_random() % (maxExclusive - minInclusive));
+}
 
 InputFrame CrowPanelHardware::pollInput() {
   InputFrame frame;

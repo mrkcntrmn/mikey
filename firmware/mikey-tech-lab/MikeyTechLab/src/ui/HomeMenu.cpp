@@ -19,12 +19,13 @@ void HomeMenu::render(const AppState& state) const {
            static_cast<unsigned>(kActivityCount));
 
   hardware_.clearFrame(kColorBlack);
-  hardware_.drawCenteredText("MIKEY TECH LAB", 24, 1, kColorYellow);
-  hardware_.drawCenteredText(indexText, 72, 2, kColorCyan);
-  hardware_.drawCenteredText(activity.name, 108, 3, kColorWhite);
-  hardware_.drawCenteredText(status, 142, 2, statusColor);
-  hardware_.drawCenteredText("<           >", 172, 1, kColorGray);
-  hardware_.drawCenteredText(countText, 196, 1, kColorWhite);
+  hardware_.drawCenteredText("TECH LAB", 15, 1, kColorYellow);
+  hardware_.drawCenteredText("MIKEY", 42, 3, kColorYellow);
+  hardware_.drawCenteredText(indexText, 75, 2, kColorCyan);
+  hardware_.drawCenteredText(activity.name, 111, 3, kColorWhite);
+  hardware_.drawCenteredText(status, 145, 2, statusColor);
+  hardware_.drawCenteredText("<           >", 174, 1, kColorGray);
+  hardware_.drawCenteredText(countText, 198, 1, kColorWhite);
   hardware_.drawCenteredText("PRESS TO SELECT", 220, 1, kColorCyan);
   hardware_.presentFrame();
   hardware_.clearLeds();

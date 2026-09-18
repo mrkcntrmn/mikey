@@ -5,10 +5,12 @@
 namespace mikey {
 
 void ModeMenu::render(const AppState& state) const {
+  const ActivityDescriptor& activity = activityAt(state.selectedActivityIndex);
   const uint8_t index = modeIndex(state.selectedMode);
   const ModeDescriptor& mode = modeAt(index);
-  const char* status = mode.available ? "READY" : "SOON";
-  const uint16_t statusColor = mode.available ? kColorGreen : kColorGray;
+  const bool available = isModeAvailable(activity.id, mode.mode);
+  const char* status = available ? "READY" : "SOON";
+  const uint16_t statusColor = available ? kColorGreen : kColorGray;
 
   char countText[16];
   snprintf(countText, sizeof(countText), "%u OF %u",
@@ -16,7 +18,7 @@ void ModeMenu::render(const AppState& state) const {
            static_cast<unsigned>(kModeCount));
 
   hardware_.clearFrame(kColorBlack);
-  hardware_.drawCenteredText("JACKPOT", 28, 2, kColorYellow);
+  hardware_.drawCenteredText(activity.name, 28, 2, kColorYellow);
   hardware_.drawCenteredText(mode.name, 90, 3, kColorWhite);
   hardware_.drawCenteredText(status, 128, 2, statusColor);
   hardware_.drawCenteredText("<           >", 158, 1, kColorGray);

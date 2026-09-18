@@ -50,25 +50,37 @@ The accepted standalone sketch remains immutable as the hardware oracle while la
 
 ## MIKEY-003 — App Shell
 
-**Status:** active.
+**Status:** complete.
+**Physical acceptance:** PASS 2026-09-18.
 
-Goals:
+Delivered and physically accepted:
 
 - child-facing home menu;
-- activity selection;
-- PLAY / LEARN / CHALLENGE mode selection;
-- shared input/display/light adapters;
-- settings persistence only where it improves the experience;
-- preserve Jackpot as Activity 01;
-- keep the accepted MIKEY-002 baseline unchanged as a regression reference.
+- activity registry and carousel selection;
+- PLAY / LEARN / CHALLENGE mode menu;
+- CrowPanel hardware adapter;
+- logical input layer;
+- Jackpot PLAY migration into the shared shell;
+- long-press Home navigation.
 
-MIKEY-003A delivers home menu + mode select + Jackpot PLAY migration. Future activities remain gated as SOON until their own milestones.
+The accepted MIKEY-002 baseline file remains unchanged as a regression reference.
 
 ## MIKEY-004 — Reaction Racer
+
+**Status:** active.
 
 Implement Activity 02 and use it to prove that a second activity can share the app shell and hardware adapters cleanly.
 
 Learning target: time and measurement.
+
+Deliverables in progress:
+
+- Home title refinement (`TECH LAB` above large `MIKEY`);
+- Reaction Racer PLAY with random cue timing;
+- false-start detection and millisecond measurement;
+- session-best tracking;
+- shared activity dispatch beyond Jackpot;
+- generalized mode menu / mode availability.
 
 ## MIKEY-005 — Simon Lights
 
