@@ -39,6 +39,17 @@ Current READY activities:
 02 REACTION  PLAY READY
 ```
 
+Reaction Racer proves that multiple activities share:
+
+- the Activity contract;
+- the logical input-event model;
+- the CrowPanel hardware adapter;
+- the Home carousel;
+- the mode selector;
+- the generic activity runtime.
+
+LEARN and CHALLENGE remain gated as SOON for both READY activities.
+
 Long-press the encoder (~900 ms) to return Home from Mode Select or an active activity.
 
 ## Boundary rule

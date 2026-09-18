@@ -21,7 +21,7 @@ TECH LAB
 07 DEBUG      SOON
 ```
 
-Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-003 completed the shared home menu and app shell. MIKEY-004 adds Reaction Racer PLAY while keeping the accepted MIKEY-002 Jackpot baseline available as a standalone comparison target.
+Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-004 completed Reaction Racer PLAY on the shared app shell. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
 
 ## Learning model
 
@@ -55,7 +55,7 @@ The progression is intentionally conceptual:
 
 ## Current status
 
-MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 is active: Reaction Racer PLAY plus home title refinement.
+MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 completed Reaction Racer PLAY and home title refinement (physical acceptance **2026-09-18**).
 
 ## Repository layout
 
@@ -102,11 +102,9 @@ For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md
 
 ## Near-term milestone
 
-**MIKEY-004 — Reaction Racer**
+**MIKEY-005 — Simon Lights**
 
-1. Refine the Home title so `MIKEY` is larger beneath `TECH LAB`.
-2. Promote Reaction to Activity 02 READY with PLAY available.
-3. Measure touch reaction time after a random non-blocking GO cue.
-4. Detect false starts and track session-best measurements.
-5. Generalize activity dispatch and mode menus beyond Jackpot.
-6. Preserve the accepted MIKEY-002 baseline unchanged for regression comparison.
+1. Implement Activity 03 Simon Lights PLAY.
+2. Teach memory and sequences on the shared app shell.
+3. Keep LEARN / CHALLENGE and later activities explicitly gated as SOON.
+4. Preserve the accepted MIKEY-002 baseline unchanged for regression comparison.
