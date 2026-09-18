@@ -1,6 +1,16 @@
 # Jackpot Baseline
 
-This is the MIKEY-002 physical-device baseline for the Elecrow CrowPanel 1.28-inch HMI ESP32 Rotary Display.
+This is the accepted MIKEY-002 physical-device baseline for the Elecrow CrowPanel 1.28-inch HMI ESP32 Rotary Display.
+
+**Status:** complete / physically accepted **2026-09-18**.
+
+**Accepted source SHA:**
+
+```text
+fc1735a0e6c34bec0caf89e5f03eac8317549f5a
+```
+
+This standalone sketch is the immutable hardware oracle. Do not rewrite it while migrating Jackpot into the MIKEY-003 app shell; keep it available for regression comparison.
 
 ## What it does
 
@@ -55,21 +65,21 @@ Under **Tools**:
 
 ## Acceptance checklist
 
-After upload, verify:
+Physical acceptance completed 2026-09-18. All items passed:
 
-- [ ] round display is upright and readable;
-- [ ] screen wheel moves clockwise;
-- [ ] jackpot stays at the top;
-- [ ] touch stops exactly once per press;
-- [ ] second touch restarts;
-- [ ] knob press also toggles run/stop;
-- [ ] clockwise knob rotation increases speed;
-- [ ] counter-clockwise rotation decreases speed;
-- [ ] speed reads from 25% through 1000%;
-- [ ] five built-in LEDs chase while running;
-- [ ] stopped LED position remains stable;
-- [ ] jackpot result appears when stopped at the top;
-- [ ] sustained 1000% operation does not reset or freeze.
+- [x] round display is upright and readable;
+- [x] screen wheel moves clockwise;
+- [x] jackpot stays at the top;
+- [x] touch stops exactly once per press;
+- [x] second touch restarts;
+- [x] knob press also toggles run/stop;
+- [x] clockwise knob rotation increases speed;
+- [x] counter-clockwise rotation decreases speed;
+- [x] speed reads from 25% through 1000%;
+- [x] five built-in LEDs chase while running;
+- [x] stopped LED position remains stable;
+- [x] jackpot result appears when stopped at the top;
+- [x] sustained 1000% operation does not reset or freeze.
 
 ## Tuning constants
 

@@ -11,16 +11,16 @@ The target device experience is a single **Mikey Tech Lab** home screen that gro
 ```text
 MIKEY TECH LAB
 
-🎰 Jackpot
-⚡ Reaction
-🧠 Simon
-🎲 Dice
-🔢 Binary
-🚦 Logic
-🐞 Debug
+01 JACKPOT    READY
+02 REACTION   SOON
+03 SIMON      SOON
+04 DICE       SOON
+05 BINARY     SOON
+06 LOGIC      SOON
+07 DEBUG      SOON
 ```
 
-Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. The current MIKEY-002 firmware boots directly into Jackpot while we qualify the physical hardware; MIKEY-003 introduces the shared home screen and activity launcher.
+Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-003 boots to this home menu. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
 
 ## Learning model
 
@@ -54,9 +54,7 @@ The progression is intentionally conceptual:
 
 ## Current status
 
-MIKEY-001 established the curriculum and application contracts. MIKEY-002 adds the first board-specific, uploadable Jackpot baseline for the Elecrow CrowPanel 1.28-inch HMI ESP32 Rotary Display.
-
-The Jackpot baseline intentionally stays separate from the future multi-activity app shell until it compiles in CI and is accepted on the physical device.
+MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 builds the shared home menu and app shell while leaving that baseline file unchanged.
 
 ## Repository layout
 
@@ -79,9 +77,9 @@ mikey/
     │   └── JackpotBaseline/
     │       └── JackpotBaseline.ino
     └── mikey-tech-lab/
-        └── src/
-            ├── Activity.h
-            └── LearningLoop.h
+        └── MikeyTechLab/
+            ├── MikeyTechLab.ino
+            └── src/
 ```
 
 ## Design constraints
@@ -103,10 +101,10 @@ For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md
 
 ## Near-term milestone
 
-**MIKEY-002 — Hardware Capture + Jackpot Baseline**
+**MIKEY-003 — App Shell**
 
-1. Compile the baseline against the pinned Arduino dependencies.
-2. Upload it to the physical CrowPanel.
-3. Verify display orientation, clockwise wheel direction, touch stop/start, encoder speed control, 25–1000% range, and the five built-in LEDs.
-4. Record any physical-device correction as evidence.
-5. Freeze the accepted baseline before MIKEY-003 refactors it into the app shell.
+1. Boot to the child-facing home menu.
+2. Navigate seven activities with the encoder carousel.
+3. Launch Jackpot PLAY from a mode selector.
+4. Keep LEARN / CHALLENGE and future activities explicitly gated as SOON.
+5. Preserve the accepted MIKEY-002 baseline unchanged for regression comparison.

@@ -36,7 +36,7 @@ This file records project-level decisions so the curriculum and firmware do not 
 
 **Decision:** Do not commit guessed pins, board models, controllers, or library versions as canonical.
 
-**Reason:** The current working jackpot prototype predates the repository and the exact configuration has not yet been captured here.
+**Reason:** Hardware values must come from vendor documentation and physical-device acceptance, not speculation.
 
 ## D-007 — Offline-first Phase 1
 
@@ -49,3 +49,17 @@ This file records project-level decisions so the curriculum and firmware do not 
 **Decision:** MIKEY-002 imports and verifies the known-good jackpot behavior before restructuring it.
 
 **Reason:** A reproducible behavioral baseline prevents architecture work from obscuring hardware or migration defects.
+
+## D-009 — Preserve accepted physical baseline
+
+**Decision:** The physically accepted MIKEY-002 Jackpot sketch remains immutable as a standalone reference while MIKEY-003 migrates its behavior into the shared application shell.
+
+**Accepted baseline SHA:**
+
+```text
+fc1735a0e6c34bec0caf89e5f03eac8317549f5a
+```
+
+**Physical acceptance date:** 2026-09-18.
+
+**Reason:** Keeping the accepted physical implementation available makes regressions during abstraction and navigation work easy to isolate.

@@ -4,7 +4,7 @@
 
 MIKEY-002 targets the **Elecrow CrowPanel 1.28-inch HMI ESP32 Rotary Display (240×240 IPS Round Touch Knob Screen)**.
 
-This identification is supported by the prior prototype dependency fingerprints (`CST816D.h` and `Adafruit_NeoPixel.h`) and Elecrow's published hardware/example configuration. Physical-device upload remains the final acceptance gate.
+This identification is supported by the prior prototype dependency fingerprints (`CST816D.h` and `Adafruit_NeoPixel.h`) and Elecrow's published hardware/example configuration. Physical-device acceptance completed **2026-09-18** against source SHA `fc1735a0e6c34bec0caf89e5f03eac8317549f5a`.
 
 ## Hardware profile
 
@@ -51,6 +51,12 @@ Use:
 - Partition Scheme: **Huge APP (3MB No OTA/1MB SPIFFS)** for the small Jackpot baseline; Elecrow's newer LVGL example also provides an `elecrow_s3` partition for its larger UI package.
 - PSRAM: **OPI PSRAM**
 
+FQBN used for physical upload:
+
+```text
+esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi
+```
+
 ### Pinned development dependencies
 
 The Jackpot baseline deliberately avoids LVGL and the external CST816D library. It needs only:
@@ -59,7 +65,7 @@ The Jackpot baseline deliberately avoids LVGL and the external CST816D library. 
 - LovyanGFX **1.2.26**
 - Adafruit NeoPixel **1.15.1**
 
-Touch polling for the CST816D is implemented directly in the sketch with `Wire1`, which removes the earlier `CST816D.h: No such file or directory` failure mode.
+Touch polling for the CST816D is implemented directly through I2C with `Wire1`, which removes the earlier `CST816D.h: No such file or directory` failure mode.
 
 ## Source provenance
 
@@ -69,9 +75,9 @@ Hardware values are based on Elecrow's current product wiki, Arduino guide, and 
 - https://www.elecrow.com/wiki/1.28_Arduino_LVGL_Rotary_Guide.html
 - https://github.com/Elecrow-RD/CrowPanel-1.28inch-HMI-ESP32-Rotary-Display-240-240-IPS-Round-Touch-Knob-Screen
 
-## Physical-device acceptance gate
+## Physical-device acceptance
 
-Before calling the baseline frozen, verify on the actual module:
+MIKEY-002 physical acceptance completed **2026-09-18** on the CrowPanel. Verified:
 
 - display renders upright;
 - wheel advances clockwise on screen;
@@ -83,4 +89,10 @@ Before calling the baseline frozen, verify on the actual module:
 - physical LED chase direction feels consistent with the screen wheel;
 - no spontaneous resets occur during sustained 1000% play.
 
-If any physical behavior differs, correct the board adapter/baseline and record the observation rather than silently changing curriculum logic.
+Accepted source baseline:
+
+```text
+fc1735a0e6c34bec0caf89e5f03eac8317549f5a
+```
+
+That standalone sketch remains the immutable hardware oracle. MIKEY-003 migrates the same pin map and behavior into the shared CrowPanel adapter without changing the accepted baseline file.
