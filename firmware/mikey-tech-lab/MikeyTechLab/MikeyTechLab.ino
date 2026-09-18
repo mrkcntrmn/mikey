@@ -1,4 +1,5 @@
 #include "src/activities/JackpotActivity.h"
+#include "src/activities/ReactionActivity.h"
 #include "src/core/ActivityRegistry.h"
 #include "src/core/AppState.h"
 #include "src/core/LearningLoop.h"
@@ -12,11 +13,24 @@ static CrowPanelHardware hardware;
 static HomeMenu homeMenu(hardware);
 static ModeMenu modeMenu(hardware);
 static JackpotActivity jackpot(hardware);
+static ReactionActivity reaction(hardware);
+static Activity* activeActivity = nullptr;
 static AppState app;
 static LearningLoop learningLoop;
 static bool uiDirty = true;
 
 static constexpr uint32_t kComingSoonMs = 900;
+
+static Activity* resolveActivity(ActivityId id) {
+  switch (id) {
+    case ActivityId::Jackpot:
+      return &jackpot;
+    case ActivityId::Reaction:
+      return &reaction;
+    default:
+      return nullptr;
+  }
+}
 
 static void showComingSoon(const char* title) {
   app.comingSoonActive = true;
@@ -34,8 +48,9 @@ static void clearComingSoonIfExpired() {
 }
 
 static void goHome() {
-  if (app.screen == AppScreen::Activity) {
-    jackpot.end();
+  if (app.screen == AppScreen::Activity && activeActivity != nullptr) {
+    activeActivity->end();
+    activeActivity = nullptr;
   }
   app.screen = AppScreen::Home;
   app.selectedMode = ActivityMode::Play;
@@ -43,15 +58,27 @@ static void goHome() {
   uiDirty = true;
 }
 
-static void launchJackpotPlay() {
+static void launchSelectedActivity() {
+  const ActivityDescriptor& selected = activityAt(app.selectedActivityIndex);
+  Activity* next = resolveActivity(selected.id);
+  if (next == nullptr) {
+    showComingSoon(selected.name);
+    return;
+  }
+
   ActivityContext context;
-  context.mode = ActivityMode::Play;
+  context.mode = app.selectedMode;
   context.predictionRequired = false;
   learningLoop.reset(false);
-  app.activeActivity = ActivityId::Jackpot;
+
+  activeActivity = next;
+  app.activeActivity = selected.id;
   app.screen = AppScreen::Activity;
   app.comingSoonActive = false;
-  jackpot.begin(context);
+  activeActivity->begin(context);
+  // Paint the first activity frame immediately. ModeSelect handled this input
+  // tick, so Activity::update() would otherwise wait until the next loop.
+  activeActivity->update();
   uiDirty = false;
 }
 
@@ -98,18 +125,24 @@ static void handleModeInput(const InputFrame& input) {
   }
 
   if (input.encoderShortPress || input.touchPress) {
+    const ActivityDescriptor& activity = activityAt(app.selectedActivityIndex);
     const ModeDescriptor& mode = modeAt(modeIndex(app.selectedMode));
-    if (!mode.available) {
+    if (!isModeAvailable(activity.id, mode.mode)) {
       showComingSoon(mode.name);
       return;
     }
-    launchJackpotPlay();
+    launchSelectedActivity();
   }
 }
 
 static void handleActivityInput(const InputFrame& input) {
-  jackpot.handleInput(input);
-  if (jackpot.exitRequested()) {
+  if (activeActivity == nullptr) {
+    goHome();
+    return;
+  }
+
+  activeActivity->handleInput(input);
+  if (activeActivity->exitRequested()) {
     goHome();
   }
 }
@@ -132,7 +165,7 @@ static void renderCurrentScreen() {
       modeMenu.render(app);
       break;
     case AppScreen::Activity:
-      // Jackpot owns its own frames while active.
+      // Active activity owns its frames while running.
       break;
   }
 }
@@ -142,6 +175,7 @@ void setup() {
   app.screen = AppScreen::Home;
   app.selectedActivityIndex = 0;
   app.selectedMode = ActivityMode::Play;
+  activeActivity = nullptr;
   uiDirty = true;
   renderCurrentScreen();
   Serial.println("Mikey Tech Lab app shell ready.");
@@ -164,7 +198,9 @@ void loop() {
         break;
       case AppScreen::Activity:
         handleActivityInput(input);
-        jackpot.update();
+        if (activeActivity != nullptr) {
+          activeActivity->update();
+        }
         break;
     }
   }

@@ -15,7 +15,7 @@ struct ActivityDescriptor {
 
 inline constexpr ActivityDescriptor kActivityRegistry[] = {
     {ActivityId::Jackpot, "JACKPOT", true},
-    {ActivityId::Reaction, "REACTION", false},
+    {ActivityId::Reaction, "REACTION", true},
     {ActivityId::Simon, "SIMON", false},
     {ActivityId::Dice, "DICE", false},
     {ActivityId::Binary, "BINARY", false},
@@ -33,19 +33,18 @@ inline const ActivityDescriptor& activityAt(uint8_t index) {
 struct ModeDescriptor {
   ActivityMode mode;
   const char* name;
-  bool available;
 };
 
-inline constexpr ModeDescriptor kJackpotModes[] = {
-    {ActivityMode::Play, "PLAY", true},
-    {ActivityMode::Learn, "LEARN", false},
-    {ActivityMode::Challenge, "CHALLENGE", false},
+inline constexpr ModeDescriptor kModes[] = {
+    {ActivityMode::Play, "PLAY"},
+    {ActivityMode::Learn, "LEARN"},
+    {ActivityMode::Challenge, "CHALLENGE"},
 };
 
-inline constexpr size_t kModeCount = sizeof(kJackpotModes) / sizeof(kJackpotModes[0]);
+inline constexpr size_t kModeCount = sizeof(kModes) / sizeof(kModes[0]);
 
 inline const ModeDescriptor& modeAt(uint8_t index) {
-  return kJackpotModes[index % kModeCount];
+  return kModes[index % kModeCount];
 }
 
 inline uint8_t modeIndex(ActivityMode mode) {
@@ -58,6 +57,16 @@ inline uint8_t modeIndex(ActivityMode mode) {
       return 2;
   }
   return 0;
+}
+
+inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
+  switch (activity) {
+    case ActivityId::Jackpot:
+    case ActivityId::Reaction:
+      return mode == ActivityMode::Play;
+    default:
+      return false;
+  }
 }
 
 }  // namespace mikey

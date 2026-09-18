@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include "InputEvent.h"
+
 namespace mikey {
 
 enum class ActivityId : uint8_t {
@@ -34,8 +36,10 @@ class Activity {
   virtual const char* name() const = 0;
 
   virtual void begin(const ActivityContext& context) = 0;
+  virtual void handleInput(const InputFrame& input) = 0;
   virtual void update() = 0;
   virtual void end() = 0;
+  virtual bool exitRequested() const = 0;
 };
 
 }  // namespace mikey
