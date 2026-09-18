@@ -76,6 +76,9 @@ static void launchSelectedActivity() {
   app.screen = AppScreen::Activity;
   app.comingSoonActive = false;
   activeActivity->begin(context);
+  // Paint the first activity frame immediately. ModeSelect handled this input
+  // tick, so Activity::update() would otherwise wait until the next loop.
+  activeActivity->update();
   uiDirty = false;
 }
 

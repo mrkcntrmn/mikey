@@ -18,6 +18,8 @@ void ReactionActivity::begin(const ActivityContext& /*context*/) {
   cueScheduledMs_ = 0;
   cueShownMs_ = 0;
   enterReady();
+  renderFrame();
+  dirty_ = false;
 }
 
 void ReactionActivity::end() {
@@ -26,13 +28,21 @@ void ReactionActivity::end() {
   hardware_.showLeds();
 }
 
+void ReactionActivity::armTouchGrace(uint32_t graceMs) {
+  ignoreTouchUntilMs_ = hardware_.nowMs() + graceMs;
+}
+
+bool ReactionActivity::touchAllowed() const {
+  return static_cast<int32_t>(hardware_.nowMs() - ignoreTouchUntilMs_) >= 0;
+}
+
 void ReactionActivity::handleInput(const InputFrame& input) {
   if (input.encoderLongPress) {
     exitRequested_ = true;
     return;
   }
 
-  if (!input.touchPress) {
+  if (!input.touchPress || !touchAllowed()) {
     return;
   }
 
@@ -69,6 +79,7 @@ void ReactionActivity::enterReady() {
   state_ = ReactionState::Ready;
   cueScheduledMs_ = 0;
   cueShownMs_ = 0;
+  armTouchGrace(kTouchGraceMs);
   dirty_ = true;
 }
 
@@ -78,12 +89,18 @@ void ReactionActivity::enterWaiting() {
       hardware_.randomRange(kMinWaitMs, kMaxWaitMsExclusive);
   cueScheduledMs_ = hardware_.nowMs() + waitMs;
   cueShownMs_ = 0;
+  // Swallow the tap that started/retried the round so it cannot also count
+  // as a false start on the next edge.
+  armTouchGrace(kTouchGraceMs);
   dirty_ = true;
 }
 
 void ReactionActivity::enterGo() {
   state_ = ReactionState::Go;
   cueShownMs_ = hardware_.nowMs();
+  // Brief grace only: reject contact already held through WAIT, but do not
+  // delay a real reaction press.
+  armTouchGrace(kGoTouchGraceMs);
   dirty_ = true;
 }
 
@@ -94,6 +111,7 @@ void ReactionActivity::enterResult(uint32_t reactionMs) {
     bestReactionMs_ = lastReactionMs_;
     hasBest_ = true;
   }
+  armTouchGrace(kTouchGraceMs);
   dirty_ = true;
 }
 
@@ -101,6 +119,7 @@ void ReactionActivity::enterFalseStart() {
   state_ = ReactionState::FalseStart;
   cueScheduledMs_ = 0;
   cueShownMs_ = 0;
+  armTouchGrace(kTouchGraceMs);
   dirty_ = true;
 }
 
@@ -138,8 +157,8 @@ void ReactionActivity::renderFrame() {
       break;
 
     case ReactionState::Go:
-      hardware_.drawCenteredText("GO!", 110, 5, kColorGreen);
-      setAllLeds(0, 180, 40);
+      hardware_.drawCenteredText("GO!", 110, 4, kColorGreen);
+      setAllLeds(0, kLedGoG, 0);
       break;
 
     case ReactionState::Result: {
@@ -155,7 +174,7 @@ void ReactionActivity::renderFrame() {
       hardware_.drawCenteredText(bestText, 128, 1, kColorCyan);
       hardware_.drawCenteredText("TAP", 168, 2, kColorWhite);
       hardware_.drawCenteredText("TO RACE AGAIN", 200, 1, kColorGray);
-      setAllLeds(0, 160, 180);
+      setAllLeds(0, kLedResultG, kLedResultB);
       break;
     }
 
@@ -165,7 +184,7 @@ void ReactionActivity::renderFrame() {
       hardware_.drawCenteredText("GO", 128, 3, kColorWhite);
       hardware_.drawCenteredText("TAP", 172, 2, kColorCyan);
       hardware_.drawCenteredText("TO RETRY", 204, 1, kColorGray);
-      setAllLeds(180, 20, 0);
+      setAllLeds(kLedFalseR, 0, 0);
       break;
   }
 
