@@ -28,6 +28,21 @@ jobs:
       - name: Run Simon sequence tests
         run: /tmp/simon-sequence-test
 
+  dice-logic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile Digital Dice session tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            tests/dice_session_test.cpp \
+            -o /tmp/dice-session-test
+
+      - name: Run Digital Dice session tests
+        run: /tmp/dice-session-test
+
   jackpot-baseline:
     runs-on: ubuntu-latest
     steps:

@@ -23,7 +23,7 @@ MikeyTechLab/
     ├── core/          # Activity contracts, registry, app state, input events
     ├── hardware/      # CrowPanel adapter (pins, display, touch, LEDs, encoder, RNG)
     ├── ui/            # Home menu + mode menu
-    └── activities/    # Jackpot + Reaction Racer + Simon Lights PLAY
+    └── activities/    # Jackpot + Reaction Racer + Simon Lights + Digital Dice PLAY
 ```
 
 Boot flow:
@@ -32,15 +32,16 @@ Boot flow:
 HOME → MODE SELECT → ACTIVITY
 ```
 
-Current PLAY-ready activities:
+Current PLAY-ready activities in the MIKEY-006 stacked candidate:
 
 ```text
 01 JACKPOT   PLAY READY
 02 REACTION  PLAY READY
 03 SIMON     PLAY READY
+04 DICE      PLAY READY
 ```
 
-The three activities share:
+All four activities share:
 
 - the Activity contract;
 - the logical input-event model;
@@ -50,6 +51,8 @@ The three activities share:
 - the generic activity runtime.
 
 Simon Lights uses the five logical LEDs as five ordered symbols. During input, the encoder selects a light and encoder short-press or screen tap submits it. Correct rounds append one new symbol. A mismatch identifies the expected and selected light, then lets the learner replay the same sequence.
+
+Digital Dice uses screen tap or encoder short-press to start a non-blocking roll animation. The final result is one of six die faces. The screen shows standard pip patterns, roll number, and how many times the current face has appeared during the session. LED color changes with the face as a physical output cue. The displayed session frequency is observational; PLAY does not claim that a short run must look evenly distributed.
 
 LEARN and CHALLENGE remain gated as SOON for all READY activities.
 
