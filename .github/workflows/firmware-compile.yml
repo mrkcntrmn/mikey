@@ -58,6 +58,21 @@ jobs:
       - name: Run Binary Lab value tests
         run: /tmp/binary-value-test
 
+  logic-logic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile Logic Lab truth-table tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            tests/logic_state_test.cpp \
+            -o /tmp/logic-state-test
+
+      - name: Run Logic Lab truth-table tests
+        run: /tmp/logic-state-test
+
   jackpot-baseline:
     runs-on: ubuntu-latest
     steps:
