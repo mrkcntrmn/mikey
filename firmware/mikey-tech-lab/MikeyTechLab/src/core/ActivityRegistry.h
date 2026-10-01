@@ -20,7 +20,7 @@ inline constexpr ActivityDescriptor kActivityRegistry[] = {
     {ActivityId::Dice, "DICE", true},
     {ActivityId::Binary, "BINARY", true},
     {ActivityId::Logic, "LOGIC", true},
-    {ActivityId::Debugging, "DEBUG", false},
+    {ActivityId::Debugging, "DEBUG", true},
 };
 
 inline constexpr size_t kActivityCount =
@@ -67,6 +67,7 @@ inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
     case ActivityId::Dice:
     case ActivityId::Binary:
     case ActivityId::Logic:
+    case ActivityId::Debugging:
       return mode == ActivityMode::Play;
     default:
       return false;
