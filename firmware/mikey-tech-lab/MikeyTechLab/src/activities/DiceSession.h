@@ -4,7 +4,7 @@
 
 namespace mikey {
 
-class DiceSession {
+// Hardware-independent session state: native CI can verify the learning rules.\nclass DiceSession {
  public:
   static constexpr uint8_t kFaceCount = 6;
 
