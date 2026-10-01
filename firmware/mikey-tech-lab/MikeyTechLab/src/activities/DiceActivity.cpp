@@ -63,8 +63,9 @@ void DiceActivity::startRoll() {
 }
 
 void DiceActivity::advanceRoll() {
-  currentFace_ = static_cast<uint8_t>(
-      hardware_.randomRange(1, static_cast<uint32_t>(DiceSession::kFaceCount + 1)));
+  const uint8_t randomIndex = static_cast<uint8_t>(
+      hardware_.randomRange(0, static_cast<uint32_t>(DiceSession::kFaceCount)));
+  currentFace_ = DiceSession::faceFromRandomIndex(randomIndex);
 
   if (framesRemaining_ > 0) {
     --framesRemaining_;
