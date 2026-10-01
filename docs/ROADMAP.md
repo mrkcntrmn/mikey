@@ -128,7 +128,13 @@ MIKEY-005 must pass this gate before it is merged.
 
 ## MIKEY-006 — Digital Dice
 
-**Status:** source candidate development; stacked on MIKEY-005.
+**Status:** source-qualified; stacked on MIKEY-005.
+
+Source-qualified head:
+
+```text
+756de4da985d8154f4a65e3ae04b456e7926e00f
+```
 
 Learning target: randomness and probability.
 
@@ -177,9 +183,57 @@ Planned physical exit criteria:
 
 ## MIKEY-007 — Binary Lab
 
-Implement Activity 05.
+**Status:** source candidate development; stacked on MIKEY-006.
 
 Learning target: bits and data representation.
+
+Source candidate delivers:
+
+- Activity 05 promoted to PLAY READY;
+- 0–15 four-bit range;
+- explicit **8, 4, 2, 1** place-value ordering;
+- encoder clockwise/counter-clockwise exploration;
+- press/tap advances by one;
+- wraparound at 0 and 15;
+- decimal and four-bit text shown together;
+- four on-screen bit cells;
+- first four physical LEDs mirror the bits;
+- fifth LED intentionally remains off;
+- hardware-independent `BinaryValue` model;
+- native tests for place values, known patterns, wrapping, and four-bit masking;
+- LEARN and CHALLENGE remain gated as SOON.
+
+Source qualification criteria:
+
+- Binary native logic tests pass;
+- Dice native logic tests remain green;
+- Simon native logic tests remain green;
+- Mikey Tech Lab Arduino compile passes;
+- immutable Jackpot baseline compile passes;
+- no GPIO ownership or network dependency is introduced.
+
+Dependency gate:
+
+- do not merge MIKEY-007 before MIKEY-005 and MIKEY-006 are accepted in order;
+- after preceding milestones merge, rebase/retarget MIKEY-007 onto accepted `main`;
+- rerun exact-head CI;
+- physical acceptance must use the exact post-rebase SHA.
+
+Planned physical exit criteria:
+
+- Home shows `05 BINARY READY`;
+- BINARY → PLAY opens with decimal 0 / binary 0000;
+- clockwise rotation advances values;
+- counter-clockwise rotation reverses values;
+- 15 wraps to 0 and 0 wraps to 15;
+- press and tap each advance exactly one value;
+- screen binary text agrees with the four on-screen bit cells;
+- first four physical LEDs agree with the displayed bits;
+- fifth LED stays off;
+- known checks pass: 5 = 0101, 10 = 1010, 15 = 1111;
+- long-press Home exits cleanly;
+- re-entry resets to 0;
+- Jackpot, Reaction Racer, Simon, and Dice regressions pass.
 
 ## MIKEY-008 — Logic Lab
 
