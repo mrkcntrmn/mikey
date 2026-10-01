@@ -90,11 +90,39 @@ The accepted MIKEY-002 baseline file remains unchanged as a regression reference
 
 ## MIKEY-005 — Simon Lights
 
-**Status:** next.
-
-Implement Activity 03.
+**Status:** source candidate; physical acceptance pending.
 
 Learning target: memory and sequences.
+
+Source candidate delivers:
+
+- Activity 03 promoted to PLAY READY;
+- five-symbol sequence playback using the five logical LEDs;
+- non-blocking playback timing;
+- encoder rotation to choose a light;
+- encoder short-press or screen tap to submit the selected light;
+- ordered input checking;
+- one-symbol sequence growth after each successful round;
+- expected-versus-selected feedback on mistakes;
+- same-sequence replay after a mistake;
+- long-press Home support;
+- bounded 16-symbol session target;
+- LEARN and CHALLENGE remain gated as SOON.
+
+Physical exit criteria:
+
+- firmware compiles in CI;
+- firmware uploads to the physical device;
+- all five logical lights are visually distinguishable on screen and LEDs;
+- playback order on screen matches LED order;
+- encoder selection wraps through all five lights in the expected direction;
+- press and touch both submit the selected light;
+- correct sequences advance exactly one symbol;
+- incorrect input reports the mismatch and replays the same sequence;
+- long-press returns Home without accidental submission;
+- leaving and re-entering Simon starts a clean session;
+- Jackpot regression passes;
+- Reaction Racer regression passes.
 
 ## MIKEY-006 — Digital Dice
 
