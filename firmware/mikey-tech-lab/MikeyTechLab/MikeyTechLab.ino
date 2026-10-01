@@ -1,4 +1,5 @@
 #include "src/activities/BinaryActivity.h"
+#include "src/activities/DebugActivity.h"
 #include "src/activities/DiceActivity.h"
 #include "src/activities/JackpotActivity.h"
 #include "src/activities/LogicActivity.h"
@@ -19,6 +20,7 @@ static ModeMenu modeMenu(hardware);
 static JackpotActivity jackpot(hardware);
 static ReactionActivity reaction(hardware);
 static SimonActivity simon(hardware);
+static DebugActivity debug(hardware);
 static DiceActivity dice(hardware);
 static BinaryActivity binary(hardware);
 static LogicActivity logic(hardware);
@@ -43,6 +45,8 @@ static Activity* resolveActivity(ActivityId id) {
       return &binary;
     case ActivityId::Logic:
       return &logic;
+    case ActivityId::Debugging:
+      return &debug;
     default:
       return nullptr;
   }
