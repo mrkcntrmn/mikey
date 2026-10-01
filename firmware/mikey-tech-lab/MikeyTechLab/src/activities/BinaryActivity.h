@@ -7,7 +7,7 @@
 
 namespace mikey {
 
-class BinaryActivity : public Activity {
+// PLAY mirrors four bits to logical LEDs 0-3; logical LED 4 is intentionally unused.\nclass BinaryActivity : public Activity {
  public:
   explicit BinaryActivity(Hardware& hardware);
 
