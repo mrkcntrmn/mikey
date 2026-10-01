@@ -17,11 +17,11 @@ TECH LAB
 03 SIMON      READY
 04 DICE       READY
 05 BINARY     READY
-06 LOGIC      SOON
+06 LOGIC      READY
 07 DEBUG      SOON
 ```
 
-Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-007 adds Binary Lab PLAY as a stacked source candidate on top of MIKEY-006. LEARN and CHALLENGE remain gated as SOON. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
+Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-008 adds Logic Lab PLAY as a stacked source candidate on top of MIKEY-007. LEARN and CHALLENGE remain gated as SOON. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
 
 ## Learning model
 
@@ -57,7 +57,7 @@ The progression is intentionally conceptual:
 
 MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 completed Reaction Racer PLAY and home title refinement (physical acceptance **2026-09-18**).
 
-MIKEY-005 Simon Lights is exact-head CI PASS and awaits physical CrowPanel acceptance. MIKEY-006 Digital Dice is source-qualified at `756de4da...` and remains stacked pending the MIKEY-005 physical/merge gate. MIKEY-007 Binary Lab is under source qualification as the next stacked candidate.
+MIKEY-005 Simon Lights is exact-head CI PASS and awaits physical CrowPanel acceptance. MIKEY-006 Digital Dice is source-qualified at `756de4da...` and remains stacked pending the MIKEY-005 physical/merge gate. MIKEY-007 Binary Lab is source-qualified at `8deea780...`. MIKEY-008 Logic Lab is under source qualification as the next stacked candidate.
 
 ## Repository layout
 
@@ -113,6 +113,10 @@ For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md
 - remains stacked on MIKEY-005 until Simon is accepted and merged.
 
 **MIKEY-007 — Binary Lab**
-- source candidate stacked on MIKEY-006;
-- source qualification requires Binary, Dice, and Simon native tests plus both Arduino compile jobs;
+- source-qualified;
+- remains stacked on MIKEY-006 pending the preceding acceptance chain.
+
+**MIKEY-008 — Logic Lab**
+- source candidate stacked on MIKEY-007;
+- source qualification requires Logic, Binary, Dice, and Simon native tests plus both Arduino compile jobs;
 - physical acceptance waits for the preceding stacked milestones to be accepted and rebased in order.
