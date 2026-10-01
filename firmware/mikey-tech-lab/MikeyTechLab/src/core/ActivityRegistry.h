@@ -16,7 +16,7 @@ struct ActivityDescriptor {
 inline constexpr ActivityDescriptor kActivityRegistry[] = {
     {ActivityId::Jackpot, "JACKPOT", true},
     {ActivityId::Reaction, "REACTION", true},
-    {ActivityId::Simon, "SIMON", false},
+    {ActivityId::Simon, "SIMON", true},
     {ActivityId::Dice, "DICE", false},
     {ActivityId::Binary, "BINARY", false},
     {ActivityId::Logic, "LOGIC", false},
@@ -63,6 +63,7 @@ inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
   switch (activity) {
     case ActivityId::Jackpot:
     case ActivityId::Reaction:
+    case ActivityId::Simon:
       return mode == ActivityMode::Play;
     default:
       return false;
