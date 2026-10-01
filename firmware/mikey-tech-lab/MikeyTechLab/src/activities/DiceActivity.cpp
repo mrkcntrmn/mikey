@@ -147,15 +147,15 @@ void DiceActivity::showFaceLeds(uint8_t face) {
 }
 
 void DiceActivity::drawDieFace(uint8_t face, uint16_t color) {
-  static constexpr int16_t kLeft = 92;
-  static constexpr int16_t kCenter = 120;
-  static constexpr int16_t kRight = 148;
-  static constexpr int16_t kTop = 94;
-  static constexpr int16_t kMiddle = 122;
-  static constexpr int16_t kBottom = 150;
-  static constexpr int16_t kPipRadius = 8;
+  static constexpr int16_t kLeft = 96;
+  static constexpr int16_t kCenterX = 120;
+  static constexpr int16_t kRight = 144;
+  static constexpr int16_t kTop = 92;
+  static constexpr int16_t kMiddle = 116;
+  static constexpr int16_t kBottom = 140;
+  static constexpr int16_t kPipRadius = 7;
 
-  hardware_.drawCircle(kCenter, kMiddle, 62, kColorWhite);
+  hardware_.drawCircle(kCenterX, kMiddle, 54, kColorWhite);
 
   const bool leftTop = face >= 4;
   const bool rightTop = face >= 2;
@@ -168,7 +168,7 @@ void DiceActivity::drawDieFace(uint8_t face, uint16_t color) {
   if (leftTop) hardware_.fillCircle(kLeft, kTop, kPipRadius, color);
   if (rightTop) hardware_.fillCircle(kRight, kTop, kPipRadius, color);
   if (leftMiddle) hardware_.fillCircle(kLeft, kMiddle, kPipRadius, color);
-  if (center) hardware_.fillCircle(kCenter, kMiddle, kPipRadius, color);
+  if (center) hardware_.fillCircle(kCenterX, kMiddle, kPipRadius, color);
   if (rightMiddle) hardware_.fillCircle(kRight, kMiddle, kPipRadius, color);
   if (leftBottom) hardware_.fillCircle(kLeft, kBottom, kPipRadius, color);
   if (rightBottom) hardware_.fillCircle(kRight, kBottom, kPipRadius, color);
@@ -179,20 +179,20 @@ void DiceActivity::renderFrame() {
 
   switch (state_) {
     case DiceState::Ready:
-      hardware_.drawCenteredText("DIGITAL", 34, 2, kColorYellow);
-      hardware_.drawCenteredText("DICE", 66, 3, kColorYellow);
-      hardware_.drawCenteredText("RANDOM ROLL", 102, 1, kColorCyan);
+      hardware_.drawCenteredText("DIGITAL", 28, 2, kColorYellow);
+      hardware_.drawCenteredText("DICE", 54, 3, kColorYellow);
       drawDieFace(1, kColorWhite);
-      hardware_.drawCenteredText("TAP OR PRESS", 194, 1, kColorWhite);
-      hardware_.drawCenteredText("TO ROLL", 214, 1, kColorCyan);
+      hardware_.drawCenteredText("TAP OR PRESS TO ROLL", 188, 1, kColorCyan);
+      hardware_.drawCenteredText("HOLD FOR HOME", 220, 1, kColorGray);
       hardware_.clearLeds();
       hardware_.showLeds();
       break;
 
     case DiceState::Rolling:
-      hardware_.drawCenteredText("ROLLING...", 42, 2, kColorYellow);
+      hardware_.drawCenteredText("ROLLING...", 34, 2, kColorYellow);
       drawDieFace(currentFace_, faceColor(currentFace_));
-      hardware_.drawCenteredText("WAIT FOR IT", 202, 1, kColorGray);
+      hardware_.drawCenteredText("WAIT FOR IT", 190, 1, kColorCyan);
+      hardware_.drawCenteredText("HOLD FOR HOME", 220, 1, kColorGray);
       showFaceLeds(currentFace_);
       break;
 
@@ -204,10 +204,11 @@ void DiceActivity::renderFrame() {
       snprintf(seenText, sizeof(seenText), "THIS FACE: %lu",
                static_cast<unsigned long>(session_.countFor(currentFace_)));
 
-      hardware_.drawCenteredText(rollText, 30, 1, kColorCyan);
+      hardware_.drawCenteredText(rollText, 28, 1, kColorCyan);
       drawDieFace(currentFace_, faceColor(currentFace_));
-      hardware_.drawCenteredText(seenText, 190, 1, kColorWhite);
-      hardware_.drawCenteredText("TAP TO ROLL AGAIN", 212, 1, kColorGray);
+      hardware_.drawCenteredText(seenText, 178, 1, kColorWhite);
+      hardware_.drawCenteredText("TAP TO ROLL AGAIN", 200, 1, kColorCyan);
+      hardware_.drawCenteredText("HOLD FOR HOME", 222, 1, kColorGray);
       showFaceLeds(currentFace_);
       break;
     }
