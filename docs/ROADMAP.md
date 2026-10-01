@@ -183,7 +183,13 @@ Planned physical exit criteria:
 
 ## MIKEY-007 — Binary Lab
 
-**Status:** source candidate development; stacked on MIKEY-006.
+**Status:** source-qualified; stacked on MIKEY-006.
+
+Source-qualified head:
+
+```text
+8deea780e73aa476f600b09a864badd1301f7329
+```
 
 Learning target: bits and data representation.
 
@@ -237,9 +243,58 @@ Planned physical exit criteria:
 
 ## MIKEY-008 — Logic Lab
 
-Implement Activity 06.
+**Status:** source candidate development; stacked on MIKEY-007.
 
 Learning target: conditions and Boolean logic.
+
+Source candidate delivers:
+
+- Activity 06 promoted to PLAY READY;
+- touch toggles Boolean input A;
+- encoder short-press toggles Boolean input B;
+- encoder clockwise/counter-clockwise cycles AND / OR / NOT A;
+- A, B, and output are shown independently on screen;
+- logical LED 0 mirrors A;
+- logical LED 1 mirrors B;
+- logical LED 4 mirrors the output;
+- NOT A explicitly ignores B;
+- hardware-independent `LogicState` model;
+- native truth-table tests for AND, OR, and NOT A;
+- native tests for rule cycling and input toggles;
+- LEARN and CHALLENGE remain gated as SOON.
+
+Source qualification criteria:
+
+- Logic native truth-table tests pass;
+- Binary native tests remain green;
+- Dice native tests remain green;
+- Simon native tests remain green;
+- Mikey Tech Lab Arduino compile passes;
+- immutable Jackpot baseline compile passes;
+- no board GPIO ownership or network dependency is introduced.
+
+Dependency gate:
+
+- do not merge MIKEY-008 before MIKEY-005, MIKEY-006, and MIKEY-007 are accepted in order;
+- after preceding milestones merge, rebase/retarget MIKEY-008 onto accepted `main`;
+- rerun exact-head CI;
+- physical acceptance must use that exact post-rebase SHA.
+
+Planned physical exit criteria:
+
+- Home shows `06 LOGIC READY`;
+- LOGIC → PLAY starts with A=0, B=0, rule AND, output 0;
+- touch toggles only A;
+- encoder short-press toggles only B;
+- encoder rotation cycles AND → OR → NOT A and reverses correctly;
+- AND truth table behaves correctly;
+- OR truth table behaves correctly;
+- NOT A output follows only A while B is ignored;
+- screen A/B/output indicators match the selected rule;
+- LED 0 mirrors A, LED 1 mirrors B, LED 4 mirrors output;
+- long-press Home exits cleanly;
+- re-entry resets inputs/rule;
+- Jackpot, Reaction Racer, Simon, Dice, and Binary regressions pass.
 
 ## MIKEY-009 — Debug Detective
 
