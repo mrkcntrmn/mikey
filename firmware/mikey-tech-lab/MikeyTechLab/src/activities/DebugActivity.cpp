@@ -4,22 +4,6 @@
 
 namespace mikey {
 
-namespace {
-
-constexpr DebugActivity::CaseText kCases[DebugSession::kCaseCount] = {
-    {"BINARY BUG", "EXPECTED 0101", "OBSERVED 0111",
-     "2 BIT STUCK ON", "8 BIT STUCK ON"},
-    {"LOGIC BUG", "A1 B0 AND => 0", "OBSERVED OUT 1",
-     "INPUT A WRONG", "AND RULE WRONG"},
-    {"SIMON BUG", "EXPECTED 2-4-1", "OBSERVED 2-3-1",
-     "STEP 2 WRONG", "STEP 3 WRONG"},
-    {"REACTION BUG", "EXPECTED > 0 MS", "OBSERVED 0 MS",
-     "LED TOO BRIGHT", "TIMER NOT UPDATED"},
-    {"DICE BUG", "EXPECTED COUNT +1", "OBSERVED COUNT +2",
-     "COUNTED TWICE", "WRONG COLOR"},
-};
-
-}  // namespace
 
 DebugActivity::DebugActivity(Hardware& hardware) : hardware_(hardware) {}
 
@@ -28,6 +12,18 @@ ActivityId DebugActivity::id() const { return ActivityId::Debugging; }
 const char* DebugActivity::name() const { return "DEBUG"; }
 
 const DebugActivity::CaseText& DebugActivity::caseText(uint8_t index) {
+  static constexpr CaseText kCases[DebugSession::kCaseCount] = {
+      {"BINARY BUG", "EXPECTED 0101", "OBSERVED 0111",
+       "2 BIT STUCK ON", "8 BIT STUCK ON"},
+      {"LOGIC BUG", "A1 B0 AND => 0", "OBSERVED OUT 1",
+       "INPUT A WRONG", "AND RULE WRONG"},
+      {"SIMON BUG", "EXPECTED 2-4-1", "OBSERVED 2-3-1",
+       "STEP 2 WRONG", "STEP 3 WRONG"},
+      {"REACTION BUG", "EXPECTED > 0 MS", "OBSERVED 0 MS",
+       "LED TOO BRIGHT", "TIMER NOT UPDATED"},
+      {"DICE BUG", "EXPECTED COUNT +1", "OBSERVED COUNT +2",
+       "COUNTED TWICE", "WRONG COLOR"},
+  };
   return kCases[index % DebugSession::kCaseCount];
 }
 
