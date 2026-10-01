@@ -3,6 +3,7 @@
 #include "../core/Activity.h"
 #include "../core/InputEvent.h"
 #include "../hardware/Hardware.h"
+#include "SimonSequence.h"
 
 namespace mikey {
 
@@ -30,8 +31,6 @@ class SimonActivity : public Activity {
   bool exitRequested() const override { return exitRequested_; }
 
  private:
-  static constexpr uint8_t kLightCount = 5;
-  static constexpr uint8_t kMaxSequence = 16;
   static constexpr uint32_t kPlaybackOnMs = 500;
   static constexpr uint32_t kPlaybackGapMs = 220;
   static constexpr uint32_t kSuccessHoldMs = 900;
@@ -53,13 +52,10 @@ class SimonActivity : public Activity {
                 uint8_t& r, uint8_t& g, uint8_t& b) const;
 
   Hardware& hardware_;
+  SimonSequence sequence_;
   SimonState state_ = SimonState::Ready;
-  uint8_t sequence_[kMaxSequence] = {};
-  uint8_t sequenceLength_ = 1;
   uint8_t playbackIndex_ = 0;
-  uint8_t inputIndex_ = 0;
   uint8_t selectedLight_ = 0;
-  uint8_t bestLength_ = 0;
   uint8_t failedExpected_ = 0;
   uint8_t failedActual_ = 0;
   uint32_t stateStartedMs_ = 0;
