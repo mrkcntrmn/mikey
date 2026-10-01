@@ -8,6 +8,10 @@ class DiceSession {
  public:
   static constexpr uint8_t kFaceCount = 6;
 
+  static uint8_t faceFromRandomIndex(uint8_t index) {
+    return static_cast<uint8_t>((index % kFaceCount) + 1);
+  }
+
   void reset() {
     totalRolls_ = 0;
     for (uint8_t i = 0; i < kFaceCount; ++i) {
