@@ -63,3 +63,10 @@ fc1735a0e6c34bec0caf89e5f03eac8317549f5a
 **Physical acceptance date:** 2026-09-18.
 
 **Reason:** Keeping the accepted physical implementation available makes regressions during abstraction and navigation work easy to isolate.
+
+
+## D-010 — Test learning rules without hardware when practical
+
+**Decision:** Keep deterministic activity rules and session state in small hardware-independent models when they can be separated cleanly from rendering, timing, and physical I/O. Run those models in native CI tests in addition to compiling the Arduino firmware.
+
+**Reason:** Fast deterministic tests make educational behavior easier to verify, preserve the hardware-abstraction boundary, and reduce the amount of logic that can only be checked on the physical CrowPanel. Physical acceptance is still required for display geometry, touch/encoder behavior, LEDs, timing feel, and integrated regressions.
