@@ -13,9 +13,17 @@ static void testFreshSessionIsEmpty() {
   }
 }
 
+static void testRandomIndicesMapToSixFaces() {
+  for (uint8_t index = 0; index < DiceSession::kFaceCount; ++index) {
+    assert(DiceSession::faceFromRandomIndex(index) == index + 1);
+  }
+  assert(DiceSession::faceFromRandomIndex(6) == 1);
+}
+
 static void testRecordsAllSixFaces() {
   DiceSession session;
-  for (uint8_t face = 1; face <= DiceSession::kFaceCount; ++face) {
+  for (uint8_t index = 0; index < DiceSession::kFaceCount; ++index) {
+    const uint8_t face = DiceSession::faceFromRandomIndex(index);
     assert(session.record(face));
   }
 
@@ -60,6 +68,7 @@ static void testResetClearsHistory() {
 
 int main() {
   testFreshSessionIsEmpty();
+  testRandomIndicesMapToSixFaces();
   testRecordsAllSixFaces();
   testFrequencyCountsAccumulate();
   testInvalidFacesDoNotMutateSession();
