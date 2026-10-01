@@ -24,15 +24,12 @@ void SimonActivity::end() {
 }
 
 void SimonActivity::resetSession() {
-  sequenceLength_ = 1;
   playbackIndex_ = 0;
-  inputIndex_ = 0;
   selectedLight_ = 0;
-  bestLength_ = 0;
   failedExpected_ = 0;
   failedActual_ = 0;
-  sequence_[0] = static_cast<uint8_t>(
-      hardware_.randomRange(0, static_cast<uint32_t>(kLightCount)));
+  sequence_.reset(static_cast<uint8_t>(hardware_.randomRange(
+      0, static_cast<uint32_t>(SimonSequence::kLightCount))));
   state_ = SimonState::Ready;
   stateStartedMs_ = hardware_.nowMs();
   dirty_ = true;
@@ -46,12 +43,11 @@ void SimonActivity::handleInput(const InputFrame& input) {
 
   if (state_ == SimonState::Input) {
     if (input.encoderClockwise) {
-      selectedLight_ = static_cast<uint8_t>((selectedLight_ + 1) % kLightCount);
+      selectedLight_ = SimonSequence::nextLight(selectedLight_);
       dirty_ = true;
     }
     if (input.encoderCounterClockwise) {
-      selectedLight_ = static_cast<uint8_t>(
-          (selectedLight_ + kLightCount - 1) % kLightCount);
+      selectedLight_ = SimonSequence::previousLight(selectedLight_);
       dirty_ = true;
     }
     if (input.encoderShortPress || input.touchPress) {
@@ -95,7 +91,7 @@ void SimonActivity::update() {
              static_cast<int32_t>(now - stateStartedMs_) >=
                  static_cast<int32_t>(kPlaybackGapMs)) {
     ++playbackIndex_;
-    if (playbackIndex_ >= sequenceLength_) {
+    if (playbackIndex_ >= sequence_.length()) {
       enterInput();
     } else {
       state_ = SimonState::PlaybackOn;
@@ -116,17 +112,12 @@ void SimonActivity::update() {
 }
 
 void SimonActivity::appendStep() {
-  if (sequenceLength_ >= kMaxSequence) {
-    return;
-  }
-  sequence_[sequenceLength_] = static_cast<uint8_t>(
-      hardware_.randomRange(0, static_cast<uint32_t>(kLightCount)));
-  ++sequenceLength_;
+  sequence_.append(static_cast<uint8_t>(hardware_.randomRange(
+      0, static_cast<uint32_t>(SimonSequence::kLightCount))));
 }
 
 void SimonActivity::beginPlayback() {
   playbackIndex_ = 0;
-  inputIndex_ = 0;
   selectedLight_ = 0;
   state_ = SimonState::PlaybackOn;
   stateStartedMs_ = hardware_.nowMs();
@@ -135,37 +126,32 @@ void SimonActivity::beginPlayback() {
 
 void SimonActivity::enterInput() {
   state_ = SimonState::Input;
-  inputIndex_ = 0;
+  sequence_.beginInput();
   selectedLight_ = 0;
   stateStartedMs_ = hardware_.nowMs();
   dirty_ = true;
 }
 
 void SimonActivity::submitSelected() {
-  if (inputIndex_ >= sequenceLength_) {
-    return;
-  }
-
-  const uint8_t expected = sequence_[inputIndex_];
+  const uint8_t expected = sequence_.expected();
   const uint8_t actual = selectedLight_;
-  if (actual != expected) {
+  const SimonSubmitResult result = sequence_.submit(actual);
+
+  if (result == SimonSubmitResult::Mismatch) {
     enterFailure(expected, actual);
     return;
   }
 
-  ++inputIndex_;
-  if (inputIndex_ >= sequenceLength_) {
-    if (sequenceLength_ > bestLength_) {
-      bestLength_ = sequenceLength_;
-    }
-    if (sequenceLength_ >= kMaxSequence) {
+  if (result == SimonSubmitResult::RoundComplete) {
+    if (sequence_.length() >= SimonSequence::kMaxLength) {
       enterComplete();
     } else {
       enterSuccess();
     }
-  } else {
-    dirty_ = true;
+    return;
   }
+
+  dirty_ = true;
 }
 
 void SimonActivity::enterSuccess() {
@@ -189,7 +175,7 @@ void SimonActivity::enterComplete() {
 }
 
 uint16_t SimonActivity::displayColor(uint8_t light) const {
-  switch (light % kLightCount) {
+  switch (light % SimonSequence::kLightCount) {
     case 0:
       return kColorRed;
     case 1:
@@ -208,7 +194,7 @@ void SimonActivity::ledColor(uint8_t light, uint8_t scale,
   r = 0;
   g = 0;
   b = 0;
-  switch (light % kLightCount) {
+  switch (light % SimonSequence::kLightCount) {
     case 0:
       r = scale;
       break;
@@ -248,10 +234,10 @@ void SimonActivity::showAllLeds(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void SimonActivity::drawLightRow(int activeLight, bool selection) {
-  static constexpr int16_t kX[kLightCount] = {40, 80, 120, 160, 200};
+  static constexpr int16_t kX[SimonSequence::kLightCount] = {40, 80, 120, 160, 200};
   static constexpr int16_t kY = 132;
 
-  for (uint8_t i = 0; i < kLightCount; ++i) {
+  for (uint8_t i = 0; i < SimonSequence::kLightCount; ++i) {
     const bool active = activeLight >= 0 && i == static_cast<uint8_t>(activeLight);
     const int16_t radius = active ? 14 : 10;
     if (active) {
@@ -270,7 +256,7 @@ void SimonActivity::renderFrame() {
 
   char roundText[20];
   snprintf(roundText, sizeof(roundText), "LENGTH %u",
-           static_cast<unsigned>(sequenceLength_));
+           static_cast<unsigned>(sequence_.length()));
 
   switch (state_) {
     case SimonState::Ready:
@@ -288,9 +274,9 @@ void SimonActivity::renderFrame() {
     case SimonState::PlaybackOn:
       hardware_.drawCenteredText("WATCH", 38, 3, kColorYellow);
       hardware_.drawCenteredText(roundText, 78, 1, kColorWhite);
-      drawLightRow(sequence_[playbackIndex_], false);
+      drawLightRow(sequence_.at(playbackIndex_), false);
       hardware_.drawCenteredText("REMEMBER THE ORDER", 190, 1, kColorCyan);
-      showSingleLed(sequence_[playbackIndex_], false);
+      showSingleLed(sequence_.at(playbackIndex_), false);
       break;
 
     case SimonState::PlaybackGap:
@@ -305,8 +291,8 @@ void SimonActivity::renderFrame() {
     case SimonState::Input: {
       char stepText[20];
       snprintf(stepText, sizeof(stepText), "STEP %u OF %u",
-               static_cast<unsigned>(inputIndex_ + 1),
-               static_cast<unsigned>(sequenceLength_));
+               static_cast<unsigned>(sequence_.inputIndex() + 1),
+               static_cast<unsigned>(sequence_.length()));
       hardware_.drawCenteredText("YOUR TURN", 38, 2, kColorYellow);
       hardware_.drawCenteredText(stepText, 78, 1, kColorWhite);
       drawLightRow(selectedLight_, true);
@@ -320,7 +306,7 @@ void SimonActivity::renderFrame() {
     case SimonState::Success: {
       char successText[24];
       snprintf(successText, sizeof(successText), "%u REMEMBERED!",
-               static_cast<unsigned>(sequenceLength_));
+               static_cast<unsigned>(sequence_.length()));
       hardware_.drawCenteredText("NICE!", 58, 3, kColorGreen);
       hardware_.drawCenteredText(successText, 110, 2, kColorWhite);
       hardware_.drawCenteredText("ADDING ONE MORE", 164, 1, kColorCyan);
