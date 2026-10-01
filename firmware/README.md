@@ -23,7 +23,7 @@ MikeyTechLab/
     ├── core/          # Activity contracts, registry, app state, input events
     ├── hardware/      # CrowPanel adapter (pins, display, touch, LEDs, encoder, RNG)
     ├── ui/            # Home menu + mode menu
-    └── activities/    # Jackpot + Reaction Racer + Simon Lights + Digital Dice PLAY
+    └── activities/    # Jackpot + Reaction + Simon + Dice + Binary PLAY
 ```
 
 Boot flow:
@@ -32,27 +32,26 @@ Boot flow:
 HOME → MODE SELECT → ACTIVITY
 ```
 
-Current PLAY-ready activities in the MIKEY-006 stacked candidate:
+Current PLAY-ready activities in the MIKEY-007 stacked candidate:
 
 ```text
 01 JACKPOT   PLAY READY
 02 REACTION  PLAY READY
 03 SIMON     PLAY READY
 04 DICE      PLAY READY
+05 BINARY    PLAY READY
 ```
 
-All four activities share:
+Binary Lab is intentionally small and visual:
 
-- the Activity contract;
-- the logical input-event model;
-- the CrowPanel hardware adapter;
-- the Home carousel;
-- the mode selector;
-- the generic activity runtime.
-
-Simon Lights uses the five logical LEDs as five ordered symbols. During input, the encoder selects a light and encoder short-press or screen tap submits it. Correct rounds append one new symbol. A mismatch identifies the expected and selected light, then lets the learner replay the same sequence.
-
-Digital Dice uses screen tap or encoder short-press to start a non-blocking roll animation. The final result is one of six die faces. The screen shows standard pip patterns, roll number, and how many times the current face has appeared during the session. LED color changes with the face as a physical output cue. The displayed session frequency is observational; PLAY does not claim that a short run must look evenly distributed.
+- encoder clockwise increments the decimal value;
+- encoder counter-clockwise decrements it;
+- encoder short-press or screen tap advances by one;
+- values wrap through 0–15;
+- the display shows the decimal value and four-bit text;
+- four on-screen bit cells are ordered **8, 4, 2, 1**;
+- the first four physical LEDs mirror those four bits;
+- the fifth LED stays off so the four-bit representation is unambiguous.
 
 LEARN and CHALLENGE remain gated as SOON for all READY activities.
 
@@ -69,5 +68,7 @@ An activity should ask for concepts such as:
 - draw a bounded random value;
 
 It should not need to know which GPIO or controller library makes that happen.
+
+Deterministic learning rules should remain hardware-independent where practical so native CI can test them. Physical acceptance is still required for integrated display, LED, touch/encoder, timing, and navigation behavior.
 
 MIKEY-002 keeps the standalone baseline board-specific. The CrowPanel adapter performs the abstraction while preserving the accepted baseline file.
