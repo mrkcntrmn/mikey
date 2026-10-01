@@ -15,13 +15,13 @@ TECH LAB
 01 JACKPOT    READY
 02 REACTION   READY
 03 SIMON      READY
-04 DICE       SOON
+04 DICE       READY
 05 BINARY     SOON
 06 LOGIC      SOON
 07 DEBUG      SOON
 ```
 
-Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-005 adds Simon Lights PLAY on the shared app shell. LEARN and CHALLENGE remain gated as SOON. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
+Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-006 adds Digital Dice PLAY as a stacked source candidate on top of MIKEY-005. LEARN and CHALLENGE remain gated as SOON. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
 
 ## Learning model
 
@@ -55,7 +55,9 @@ The progression is intentionally conceptual:
 
 ## Current status
 
-MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 completed Reaction Racer PLAY and home title refinement (physical acceptance **2026-09-18**). MIKEY-005 Simon Lights PLAY is implemented as the current source candidate; physical-device acceptance remains required before the milestone is complete.
+MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 completed Reaction Racer PLAY and home title refinement (physical acceptance **2026-09-18**).
+
+MIKEY-005 Simon Lights is an exact-head CI-passing source candidate awaiting physical CrowPanel acceptance. MIKEY-006 Digital Dice is being developed as a stacked candidate on top of that exact MIKEY-005 source. MIKEY-006 must not bypass the MIKEY-005 physical gate.
 
 ## Repository layout
 
@@ -100,14 +102,16 @@ Start with [Vision](docs/VISION.md), [Learning Philosophy](docs/LEARNING-PHILOSO
 
 For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md) and [Jackpot Baseline](firmware/jackpot-baseline/README.md).
 
-## Near-term milestone
+## Active gates
 
 **MIKEY-005 — Simon Lights physical acceptance**
 
-1. Upload the MIKEY-005 source candidate to the CrowPanel.
-2. Verify five-light playback order and encoder selection.
-3. Verify correct entries advance the sequence by one.
-4. Verify mistakes explain the expected versus selected light and replay the same sequence.
-5. Verify long-press Home and clean Simon re-entry.
-6. Run Jackpot and Reaction Racer regression checks.
-7. Keep LEARN / CHALLENGE and later activities explicitly gated as SOON.
+- Flash and accept the exact MIKEY-005 candidate before merging it.
+- Run Jackpot and Reaction Racer regression checks.
+
+**MIKEY-006 — Digital Dice source qualification**
+
+- Keep Digital Dice stacked on MIKEY-005 until Simon is physically accepted.
+- Prove Dice session logic and firmware compile in CI.
+- After MIKEY-005 merges, rebase/retarget MIKEY-006 onto the accepted baseline.
+- Then perform Digital Dice physical acceptance on that exact post-rebase SHA.
