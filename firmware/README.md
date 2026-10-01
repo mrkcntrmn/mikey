@@ -23,7 +23,7 @@ MikeyTechLab/
     ├── core/          # Activity contracts, registry, app state, input events
     ├── hardware/      # CrowPanel adapter (pins, display, touch, LEDs, encoder, RNG)
     ├── ui/            # Home menu + mode menu
-    └── activities/    # Jackpot + Reaction + Simon + Dice + Binary PLAY
+    └── activities/    # Jackpot + Reaction Racer + Simon + Dice + Binary PLAY
 ```
 
 Boot flow:
@@ -42,16 +42,20 @@ Current PLAY-ready activities in the MIKEY-007 stacked candidate:
 05 BINARY    PLAY READY
 ```
 
-Binary Lab is intentionally small and visual:
+All five activities share:
 
-- encoder clockwise increments the decimal value;
-- encoder counter-clockwise decrements it;
-- encoder short-press or screen tap advances by one;
-- values wrap through 0–15;
-- the display shows the decimal value and four-bit text;
-- four on-screen bit cells are ordered **8, 4, 2, 1**;
-- the first four physical LEDs mirror those four bits;
-- the fifth LED stays off so the four-bit representation is unambiguous.
+- the Activity contract;
+- the logical input-event model;
+- the CrowPanel hardware adapter;
+- the Home carousel;
+- the mode selector;
+- the generic activity runtime.
+
+Simon Lights uses the five logical LEDs as five ordered symbols. During input, the encoder selects a light and encoder short-press or screen tap submits it. Correct rounds append one new symbol. A mismatch identifies the expected and selected light, then lets the learner replay the same sequence.
+
+Digital Dice uses screen tap or encoder short-press to start a non-blocking roll animation. The final result is one of six die faces. The screen shows standard pip patterns, roll number, and how many times the current face has appeared during the session. LED color changes with the face as a physical output cue. The displayed session frequency is observational; PLAY does not claim that a short run must look evenly distributed.
+
+Binary Lab explores values 0–15 as four bits. The display shows the decimal value, binary text, and four bit cells ordered **8, 4, 2, 1**. The first four physical LEDs mirror those bits; the fifth LED stays off so the four-bit representation is unambiguous. Rotate to explore values or press/tap to advance by one.
 
 LEARN and CHALLENGE remain gated as SOON for all READY activities.
 
