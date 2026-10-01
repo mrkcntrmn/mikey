@@ -73,6 +73,21 @@ jobs:
       - name: Run Logic Lab truth-table tests
         run: /tmp/logic-state-test
 
+  debug-logic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile Debug Detective session tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            tests/debug_session_test.cpp \
+            -o /tmp/debug-session-test
+
+      - name: Run Debug Detective session tests
+        run: /tmp/debug-session-test
+
   jackpot-baseline:
     runs-on: ubuntu-latest
     steps:
