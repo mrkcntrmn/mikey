@@ -19,7 +19,7 @@ inline constexpr ActivityDescriptor kActivityRegistry[] = {
     {ActivityId::Simon, "SIMON", true},
     {ActivityId::Dice, "DICE", true},
     {ActivityId::Binary, "BINARY", true},
-    {ActivityId::Logic, "LOGIC", false},
+    {ActivityId::Logic, "LOGIC", true},
     {ActivityId::Debugging, "DEBUG", false},
 };
 
@@ -66,6 +66,7 @@ inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
     case ActivityId::Simon:
     case ActivityId::Dice:
     case ActivityId::Binary:
+    case ActivityId::Logic:
       return mode == ActivityMode::Play;
     default:
       return false;

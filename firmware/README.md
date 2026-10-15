@@ -23,7 +23,7 @@ MikeyTechLab/
     ├── core/          # Activity contracts, registry, app state, input events
     ├── hardware/      # CrowPanel adapter (pins, display, touch, LEDs, encoder, RNG)
     ├── ui/            # Home menu + mode menu
-    └── activities/    # Jackpot + Reaction Racer + Simon + Dice + Binary PLAY
+    └── activities/    # Jackpot + Reaction + Simon + Dice + Binary + Logic PLAY
 ```
 
 Boot flow:
@@ -32,7 +32,7 @@ Boot flow:
 HOME → MODE SELECT → ACTIVITY
 ```
 
-Current PLAY-ready activities in the MIKEY-007 stacked candidate:
+Current PLAY-ready activities in the MIKEY-008 stacked candidate:
 
 ```text
 01 JACKPOT   PLAY READY
@@ -40,9 +40,10 @@ Current PLAY-ready activities in the MIKEY-007 stacked candidate:
 03 SIMON     PLAY READY
 04 DICE      PLAY READY
 05 BINARY    PLAY READY
+06 LOGIC     PLAY READY
 ```
 
-All five activities share:
+All six activities share:
 
 - the Activity contract;
 - the logical input-event model;
@@ -56,6 +57,8 @@ Simon Lights uses the five logical LEDs as five ordered symbols. During input, t
 Digital Dice uses screen tap or encoder short-press to start a non-blocking roll animation. The final result is one of six die faces. The screen shows standard pip patterns, roll number, and how many times the current face has appeared during the session. LED color changes with the face as a physical output cue. The displayed session frequency is observational; PLAY does not claim that a short run must look evenly distributed.
 
 Binary Lab explores values 0–15 as four bits. The display shows the decimal value, binary text, and four bit cells ordered **8, 4, 2, 1**. The first four physical LEDs mirror those bits; the fifth LED stays off so the four-bit representation is unambiguous. Rotate to explore values or press/tap to advance by one.
+
+Logic Lab turns physical inputs into Boolean inputs: touch toggles A, encoder short-press toggles B, and encoder rotation selects AND, OR, or NOT A. The screen shows A, B, and output separately; logical LEDs 0/1 mirror A/B and logical LED 4 mirrors the output.
 
 LEARN and CHALLENGE remain gated as SOON for all READY activities.
 

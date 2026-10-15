@@ -1,6 +1,7 @@
 #include "src/activities/BinaryActivity.h"
 #include "src/activities/DiceActivity.h"
 #include "src/activities/JackpotActivity.h"
+#include "src/activities/LogicActivity.h"
 #include "src/activities/ReactionActivity.h"
 #include "src/activities/SimonActivity.h"
 #include "src/core/ActivityRegistry.h"
@@ -20,6 +21,7 @@ static ReactionActivity reaction(hardware);
 static SimonActivity simon(hardware);
 static DiceActivity dice(hardware);
 static BinaryActivity binary(hardware);
+static LogicActivity logic(hardware);
 static Activity* activeActivity = nullptr;
 static AppState app;
 static LearningLoop learningLoop;
@@ -39,6 +41,8 @@ static Activity* resolveActivity(ActivityId id) {
       return &dice;
     case ActivityId::Binary:
       return &binary;
+    case ActivityId::Logic:
+      return &logic;
     default:
       return nullptr;
   }
