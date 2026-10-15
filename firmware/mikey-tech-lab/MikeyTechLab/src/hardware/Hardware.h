@@ -6,7 +6,7 @@
 
 namespace mikey {
 
-// Shared RGB565 palette used by menus and Jackpot.
+// Shared RGB565 palette used by menus and activities.
 static constexpr uint16_t kColorBlack = 0x0000;
 static constexpr uint16_t kColorWhite = 0xFFFF;
 static constexpr uint16_t kColorGray = 0x4208;
@@ -14,6 +14,8 @@ static constexpr uint16_t kColorYellow = 0xFFE0;
 static constexpr uint16_t kColorCyan = 0x07FF;
 static constexpr uint16_t kColorGreen = 0x07E0;
 static constexpr uint16_t kColorRed = 0xF800;
+static constexpr uint16_t kColorBlue = 0x001F;
+static constexpr uint16_t kColorMagenta = 0xF81F;
 
 static constexpr int kDisplaySize = 240;
 static constexpr int kLedCountLogical = 5;

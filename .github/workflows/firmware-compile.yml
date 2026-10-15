@@ -4,13 +4,30 @@ on:
   push:
     paths:
       - 'firmware/**'
+      - 'tests/**'
       - '.github/workflows/firmware-compile.yml'
   pull_request:
     paths:
       - 'firmware/**'
+      - 'tests/**'
       - '.github/workflows/firmware-compile.yml'
 
 jobs:
+  simon-logic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile Simon sequence tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            tests/simon_sequence_test.cpp \
+            -o /tmp/simon-sequence-test
+
+      - name: Run Simon sequence tests
+        run: /tmp/simon-sequence-test
+
   jackpot-baseline:
     runs-on: ubuntu-latest
     steps:

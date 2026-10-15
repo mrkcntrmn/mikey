@@ -14,14 +14,14 @@ TECH LAB
 
 01 JACKPOT    READY
 02 REACTION   READY
-03 SIMON      SOON
+03 SIMON      READY
 04 DICE       SOON
 05 BINARY     SOON
 06 LOGIC      SOON
 07 DEBUG      SOON
 ```
 
-Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-004 completed Reaction Racer PLAY on the shared app shell. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
+Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-005 adds Simon Lights PLAY on the shared app shell. LEARN and CHALLENGE remain gated as SOON. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
 
 ## Learning model
 
@@ -55,7 +55,7 @@ The progression is intentionally conceptual:
 
 ## Current status
 
-MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 completed Reaction Racer PLAY and home title refinement (physical acceptance **2026-09-18**).
+MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 completed Reaction Racer PLAY and home title refinement (physical acceptance **2026-09-18**). MIKEY-005 Simon Lights PLAY is implemented as the current source candidate; physical-device acceptance remains required before the milestone is complete.
 
 ## Repository layout
 
@@ -102,9 +102,12 @@ For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md
 
 ## Near-term milestone
 
-**MIKEY-005 — Simon Lights**
+**MIKEY-005 — Simon Lights physical acceptance**
 
-1. Implement Activity 03 Simon Lights PLAY.
-2. Teach memory and sequences on the shared app shell.
-3. Keep LEARN / CHALLENGE and later activities explicitly gated as SOON.
-4. Preserve the accepted MIKEY-002 baseline unchanged for regression comparison.
+1. Upload the MIKEY-005 source candidate to the CrowPanel.
+2. Verify five-light playback order and encoder selection.
+3. Verify correct entries advance the sequence by one.
+4. Verify mistakes explain the expected versus selected light and replay the same sequence.
+5. Verify long-press Home and clean Simon re-entry.
+6. Run Jackpot and Reaction Racer regression checks.
+7. Keep LEARN / CHALLENGE and later activities explicitly gated as SOON.

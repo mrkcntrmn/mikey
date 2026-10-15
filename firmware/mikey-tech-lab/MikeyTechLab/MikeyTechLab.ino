@@ -1,5 +1,6 @@
 #include "src/activities/JackpotActivity.h"
 #include "src/activities/ReactionActivity.h"
+#include "src/activities/SimonActivity.h"
 #include "src/core/ActivityRegistry.h"
 #include "src/core/AppState.h"
 #include "src/core/LearningLoop.h"
@@ -14,6 +15,7 @@ static HomeMenu homeMenu(hardware);
 static ModeMenu modeMenu(hardware);
 static JackpotActivity jackpot(hardware);
 static ReactionActivity reaction(hardware);
+static SimonActivity simon(hardware);
 static Activity* activeActivity = nullptr;
 static AppState app;
 static LearningLoop learningLoop;
@@ -27,6 +29,8 @@ static Activity* resolveActivity(ActivityId id) {
       return &jackpot;
     case ActivityId::Reaction:
       return &reaction;
+    case ActivityId::Simon:
+      return &simon;
     default:
       return nullptr;
   }

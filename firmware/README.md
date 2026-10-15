@@ -23,7 +23,7 @@ MikeyTechLab/
     ├── core/          # Activity contracts, registry, app state, input events
     ├── hardware/      # CrowPanel adapter (pins, display, touch, LEDs, encoder, RNG)
     ├── ui/            # Home menu + mode menu
-    └── activities/    # Jackpot PLAY + Reaction Racer PLAY
+    └── activities/    # Jackpot + Reaction Racer + Simon Lights PLAY
 ```
 
 Boot flow:
@@ -32,14 +32,15 @@ Boot flow:
 HOME → MODE SELECT → ACTIVITY
 ```
 
-Current READY activities:
+Current PLAY-ready activities:
 
 ```text
 01 JACKPOT   PLAY READY
 02 REACTION  PLAY READY
+03 SIMON     PLAY READY
 ```
 
-Reaction Racer proves that multiple activities share:
+The three activities share:
 
 - the Activity contract;
 - the logical input-event model;
@@ -48,7 +49,9 @@ Reaction Racer proves that multiple activities share:
 - the mode selector;
 - the generic activity runtime.
 
-LEARN and CHALLENGE remain gated as SOON for both READY activities.
+Simon Lights uses the five logical LEDs as five ordered symbols. During input, the encoder selects a light and encoder short-press or screen tap submits it. Correct rounds append one new symbol. A mismatch identifies the expected and selected light, then lets the learner replay the same sequence.
+
+LEARN and CHALLENGE remain gated as SOON for all READY activities.
 
 Long-press the encoder (~900 ms) to return Home from Mode Select or an active activity.
 
