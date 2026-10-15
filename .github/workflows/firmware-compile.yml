@@ -43,6 +43,21 @@ jobs:
       - name: Run Digital Dice session tests
         run: /tmp/dice-session-test
 
+  binary-logic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile Binary Lab value tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            tests/binary_value_test.cpp \
+            -o /tmp/binary-value-test
+
+      - name: Run Binary Lab value tests
+        run: /tmp/binary-value-test
+
   jackpot-baseline:
     runs-on: ubuntu-latest
     steps:
