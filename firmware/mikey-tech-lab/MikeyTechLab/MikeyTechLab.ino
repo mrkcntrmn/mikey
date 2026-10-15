@@ -1,3 +1,4 @@
+#include "src/activities/DiceActivity.h"
 #include "src/activities/JackpotActivity.h"
 #include "src/activities/ReactionActivity.h"
 #include "src/activities/SimonActivity.h"
@@ -16,6 +17,7 @@ static ModeMenu modeMenu(hardware);
 static JackpotActivity jackpot(hardware);
 static ReactionActivity reaction(hardware);
 static SimonActivity simon(hardware);
+static DiceActivity dice(hardware);
 static Activity* activeActivity = nullptr;
 static AppState app;
 static LearningLoop learningLoop;
@@ -31,6 +33,8 @@ static Activity* resolveActivity(ActivityId id) {
       return &reaction;
     case ActivityId::Simon:
       return &simon;
+    case ActivityId::Dice:
+      return &dice;
     default:
       return nullptr;
   }

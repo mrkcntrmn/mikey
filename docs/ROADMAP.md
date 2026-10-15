@@ -90,7 +90,7 @@ The accepted MIKEY-002 baseline file remains unchanged as a regression reference
 
 ## MIKEY-005 — Simon Lights
 
-**Status:** source candidate; physical acceptance pending.
+**Status:** source candidate; exact-head CI PASS; physical acceptance pending.
 
 Learning target: memory and sequences.
 
@@ -107,11 +107,11 @@ Source candidate delivers:
 - same-sequence replay after a mistake;
 - long-press Home support;
 - bounded 16-symbol session target;
+- hardware-independent Simon sequence tests;
 - LEARN and CHALLENGE remain gated as SOON.
 
 Physical exit criteria:
 
-- firmware compiles in CI;
 - firmware uploads to the physical device;
 - all five logical lights are visually distinguishable on screen and LEDs;
 - playback order on screen matches LED order;
@@ -124,11 +124,56 @@ Physical exit criteria:
 - Jackpot regression passes;
 - Reaction Racer regression passes.
 
+MIKEY-005 must pass this gate before it is merged.
+
 ## MIKEY-006 — Digital Dice
 
-Implement Activity 04.
+**Status:** source candidate development; stacked on MIKEY-005.
 
 Learning target: randomness and probability.
+
+Source candidate delivers:
+
+- Activity 04 promoted to PLAY READY;
+- screen tap or encoder short-press starts a roll;
+- non-blocking nine-frame rolling animation;
+- six standard die-face outcomes;
+- standard pip layout on the round display;
+- distinct LED color cue for each outcome;
+- session roll counter;
+- per-face observed frequency counter for the current result;
+- hardware-independent session/counting tests;
+- long-press Home support;
+- LEARN and CHALLENGE remain gated as SOON.
+
+Source qualification criteria:
+
+- Dice session tests pass;
+- Simon sequence tests continue to pass;
+- app-shell firmware compiles;
+- immutable Jackpot baseline compiles;
+- MIKEY-006 diff contains no board-pin ownership or cloud/network dependency.
+
+Dependency gate:
+
+- do not merge MIKEY-006 before MIKEY-005 physical acceptance and merge;
+- after MIKEY-005 merges, rebase or retarget MIKEY-006 onto the accepted baseline and rerun exact-head CI;
+- physical acceptance must use that exact post-rebase MIKEY-006 SHA.
+
+Planned physical exit criteria:
+
+- Home shows `04 DICE READY`;
+- DICE → PLAY opens the ready screen;
+- encoder short-press starts exactly one roll;
+- screen tap starts exactly one roll;
+- rolling animation stays responsive and does not block long-press Home;
+- final result is always 1 through 6;
+- each face renders the correct pip pattern;
+- result LED cue is visible and stable until the next roll;
+- roll number increases by exactly one per completed roll;
+- current-face frequency increases only when that face is rolled;
+- leaving and re-entering Digital Dice starts a clean session;
+- Jackpot, Reaction Racer, and Simon regressions pass.
 
 ## MIKEY-007 — Binary Lab
 
