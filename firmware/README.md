@@ -32,7 +32,7 @@ Boot flow:
 HOME → MODE SELECT → ACTIVITY
 ```
 
-Current PLAY-ready activities in the MIKEY-009 stacked candidate:
+Current PLAY-ready activities in accepted `main` (Core Seven integration SHA `e8fe7a202571c1de1c76d33fca93f041d68145f8`):
 
 ```text
 01 JACKPOT   PLAY READY
@@ -63,7 +63,7 @@ Logic Lab turns physical inputs into Boolean inputs: touch toggles A, encoder sh
 
 Debug Detective presents five short expected-versus-observed cases drawn from Binary, Logic, Simon, Reaction, and Dice. Encoder rotation chooses between two hypotheses and press/tap checks the diagnosis. The activity does not corrupt the earlier activities; it reuses their concepts as controlled diagnostic evidence.
 
-LEARN and CHALLENGE remain gated as SOON for all READY activities.
+LEARN and CHALLENGE remain gated as SOON for all READY activities. MIKEY-005–009 are now merged after owner-reported physical PASS, with exact-head source CI green. See [Core Seven Closeout](../docs/CORE-SEVEN-CLOSEOUT-2026-10-15.md) for merge/source hashes, CI runs, and evidence limits; this is not an independently witnessed flashing receipt.
 
 Long-press the encoder (~900 ms) to return Home from Mode Select or an active activity.
 
