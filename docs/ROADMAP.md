@@ -1,5 +1,7 @@
 # Roadmap
 
+> **Current state — 2026-10-15:** Core Seven PLAY source merged on `main` at `e8fe7a202571c1de1c76d33fca93f041d68145f8`. The owner reports physical PASS for MIKEY-005–009. The dependency and physical-check lists below document their original acceptance contract; they are preserved as historical criteria rather than current blocks. See [Core Seven Closeout](CORE-SEVEN-CLOSEOUT-2026-10-15.md) for evidence and limitations. LEARN/CHALLENGE remain SOON. [MIKEY-010](MIKEY-010-READINESS.md) is the next learning-review phase.
+
 ## MIKEY-001 — Foundation
 
 **Status:** complete.
@@ -90,7 +92,7 @@ The accepted MIKEY-002 baseline file remains unchanged as a regression reference
 
 ## MIKEY-005 — Simon Lights
 
-**Status:** source candidate; exact-head CI PASS; physical acceptance pending.
+**Status:** complete; merged PR #5 on 2026-10-15; owner-reported physical PASS; exact-head CI PASS.
 
 Learning target: memory and sequences.
 
@@ -124,11 +126,11 @@ Physical exit criteria:
 - Jackpot regression passes;
 - Reaction Racer regression passes.
 
-MIKEY-005 must pass this gate before it is merged.
+MIKEY-005 owner-reported physical PASS and merge completed on 2026-10-15; this checklist is retained for historical reference.
 
 ## MIKEY-006 — Digital Dice
 
-**Status:** source-qualified; stacked on MIKEY-005.
+**Status:** complete; merged PR #6 on 2026-10-15; owner-reported physical PASS; exact-head CI PASS.
 
 Source-qualified head:
 
@@ -160,13 +162,13 @@ Source qualification criteria:
 - immutable Jackpot baseline compiles;
 - MIKEY-006 diff contains no board-pin ownership or cloud/network dependency.
 
-Dependency gate:
+Historical dependency gate (satisfied at integration):
 
 - do not merge MIKEY-006 before MIKEY-005 physical acceptance and merge;
 - after MIKEY-005 merges, rebase or retarget MIKEY-006 onto the accepted baseline and rerun exact-head CI;
 - physical acceptance must use that exact post-rebase MIKEY-006 SHA.
 
-Planned physical exit criteria:
+Planned physical exit criteria (per original specification; individual outcomes not independently logged in this closeout):
 
 - Home shows `04 DICE READY`;
 - DICE → PLAY opens the ready screen;
@@ -183,7 +185,7 @@ Planned physical exit criteria:
 
 ## MIKEY-007 — Binary Lab
 
-**Status:** source-qualified; stacked on MIKEY-006.
+**Status:** complete; merged PR #7 on 2026-10-15; owner-reported physical PASS; exact-head CI PASS.
 
 Source-qualified head:
 
@@ -218,14 +220,14 @@ Source qualification criteria:
 - immutable Jackpot baseline compile passes;
 - no GPIO ownership or network dependency is introduced.
 
-Dependency gate:
+Historical dependency gate (satisfied at integration):
 
 - do not merge MIKEY-007 before MIKEY-005 and MIKEY-006 are accepted in order;
 - after preceding milestones merge, rebase/retarget MIKEY-007 onto accepted `main`;
 - rerun exact-head CI;
 - physical acceptance must use the exact post-rebase SHA.
 
-Planned physical exit criteria:
+Planned physical exit criteria (per original specification; individual outcomes not independently logged in this closeout):
 
 - Home shows `05 BINARY READY`;
 - BINARY → PLAY opens with decimal 0 / binary 0000;
@@ -243,7 +245,7 @@ Planned physical exit criteria:
 
 ## MIKEY-008 — Logic Lab
 
-**Status:** source-qualified; stacked on MIKEY-007.
+**Status:** complete; merged PR #8 on 2026-10-15; owner-reported physical PASS; exact-head CI PASS.
 
 Source-qualified head:
 
@@ -279,14 +281,14 @@ Source qualification criteria:
 - immutable Jackpot baseline compile passes;
 - no board GPIO ownership or network dependency is introduced.
 
-Dependency gate:
+Historical dependency gate (satisfied at integration):
 
 - do not merge MIKEY-008 before MIKEY-005, MIKEY-006, and MIKEY-007 are accepted in order;
 - after preceding milestones merge, rebase/retarget MIKEY-008 onto accepted `main`;
 - rerun exact-head CI;
 - physical acceptance must use that exact post-rebase SHA.
 
-Planned physical exit criteria:
+Planned physical exit criteria (per original specification; individual outcomes not independently logged in this closeout):
 
 - Home shows `06 LOGIC READY`;
 - LOGIC → PLAY starts with A=0, B=0, rule AND, output 0;
@@ -304,7 +306,7 @@ Planned physical exit criteria:
 
 ## MIKEY-009 — Debug Detective
 
-**Status:** source candidate development; stacked on MIKEY-008.
+**Status:** complete; merged PR #9 on 2026-10-15; owner-reported physical PASS; exact-head CI PASS.
 
 Learning target: expected versus observed behavior, hypothesis, and evidence.
 
@@ -335,14 +337,14 @@ Source qualification criteria:
 - immutable Jackpot baseline compile passes;
 - no earlier activity is deliberately corrupted in runtime code.
 
-Dependency gate:
+Historical dependency gate (satisfied at integration):
 
 - do not merge MIKEY-009 before MIKEY-005 through MIKEY-008 are accepted in order;
 - after preceding milestones merge, rebase/retarget MIKEY-009 onto accepted `main`;
 - rerun exact-head CI;
 - physical acceptance must use that exact post-rebase SHA.
 
-Planned physical exit criteria:
+Planned physical exit criteria (per original specification; individual outcomes not independently logged in this closeout):
 
 - Home shows `07 DEBUG READY`;
 - DEBUG → PLAY opens bug 1 of 5;
@@ -362,7 +364,9 @@ Planned physical exit criteria:
 
 ## MIKEY-010 — Phase 1 Review
 
-Evaluate what Mikey can explain and demonstrate. Do not graduate to IDE lessons solely because all activities exist.
+**Status:** next; assessment and mode-design planning, not a completed learning assessment.
+
+Use the [MIKEY-010 Readiness Guide](MIKEY-010-READINESS.md) to evaluate what Mikey can explain and demonstrate. Do not graduate to IDE lessons solely because all activities exist. Record independent, prompted, and not-yet demonstrations without recording personal details publicly. Design LEARN and CHALLENGE separately without silently making them READY.
 
 Possible readiness evidence:
 

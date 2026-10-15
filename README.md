@@ -21,7 +21,7 @@ TECH LAB
 07 DEBUG      READY
 ```
 
-Selecting an activity leads into its **PLAY**, **LEARN**, or **CHALLENGE** experience. MIKEY-009 adds Debug Detective PLAY as the final stacked Core Seven source candidate. LEARN and CHALLENGE remain gated as SOON. The accepted MIKEY-002 Jackpot baseline remains available as a standalone comparison target.
+All seven **PLAY** activities are integrated on `main` as of 2026-10-15 (Core Seven firmware integration SHA `e8fe7a202571c1de1c76d33fca93f041d68145f8`). The project owner reported physical acceptance PASS for MIKEY-005 through MIKEY-009; these are owner reports, not independently observed uploads. **LEARN and CHALLENGE remain SOON**. The MIKEY-002 Jackpot standalone baseline remains immutable.
 
 ## Learning model
 
@@ -57,7 +57,7 @@ The progression is intentionally conceptual:
 
 MIKEY-001 established the curriculum and application contracts. MIKEY-002 delivered and physically accepted the CrowPanel Jackpot baseline on **2026-09-18** (`fc1735a`). MIKEY-003 completed the shared home menu and app shell (physical acceptance **2026-09-18**). MIKEY-004 completed Reaction Racer PLAY and home title refinement (physical acceptance **2026-09-18**).
 
-MIKEY-005 Simon Lights is exact-head CI PASS and awaits physical CrowPanel acceptance. MIKEY-006 Digital Dice is source-qualified at `756de4da...` and remains stacked pending the MIKEY-005 physical/merge gate. MIKEY-007 Binary Lab is source-qualified at `8deea780...`. MIKEY-008 Logic Lab is source-qualified at `dab72f54...`. MIKEY-009 Debug Detective is under source qualification as the final Core Seven candidate.
+MIKEY-005 Simon Lights, MIKEY-006 Digital Dice, MIKEY-007 Binary Lab, MIKEY-008 Logic Lab, and MIKEY-009 Debug Detective all passed their source CI gates and merged to `main` in dependency order on **2026-10-15**. The owner confirmed physical acceptance PASS for these activities on the same date. The accepted seven-game firmware tree matches the exact CI-qualified MIKEY-009 tree. For commit-by-commit provenance, acceptance limits and CI runs, see [Core Seven Closeout](docs/CORE-SEVEN-CLOSEOUT-2026-10-15.md).
 
 ## Repository layout
 
@@ -72,7 +72,9 @@ mikey/
 │   ├── HARDWARE.md
 │   ├── MENTOR-GUIDE.md
 │   ├── ROADMAP.md
-│   └── DECISIONS.md
+│   ├── DECISIONS.md
+│   ├── CORE-SEVEN-CLOSEOUT-2026-10-15.md
+│   └── MIKEY-010-READINESS.md
 └── firmware/
     ├── README.md
     ├── jackpot-baseline/
@@ -100,27 +102,14 @@ mikey/
 
 Start with [Vision](docs/VISION.md), [Learning Philosophy](docs/LEARNING-PHILOSOPHY.md), and the [Curriculum](docs/CURRICULUM.md). New games should follow [Activity Spec](docs/ACTIVITY-SPEC.md).
 
-For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md) and [Jackpot Baseline](firmware/jackpot-baseline/README.md).
+For the physical board and upload configuration, see [Hardware](docs/HARDWARE.md) and [Jackpot Baseline](firmware/jackpot-baseline/README.md). For the accepted seven-game integration and next educational review, see [Core Seven Closeout](docs/CORE-SEVEN-CLOSEOUT-2026-10-15.md) and [MIKEY-010 Readiness](docs/MIKEY-010-READINESS.md).
 
-## Active gates
+## Current phase and gates
 
-**MIKEY-005 — Simon Lights**
-- physical acceptance pending;
-- do not merge before device regression checks pass.
+**Core Seven PLAY: source-integrated; owner-confirmed physical PASS.** PRs #5–#9 are merged; no additional PLAY implementation is awaiting promotion.
 
-**MIKEY-006 — Digital Dice**
-- source-qualified;
-- remains stacked on MIKEY-005 until Simon is accepted and merged.
+**MIKEY-010 — Phase 1 Review:** next phase. Use [MIKEY-010 Readiness](docs/MIKEY-010-READINESS.md) to observe actual concept understanding without making play feel like a test. Do not declare IDE readiness from game-completion counts alone.
 
-**MIKEY-007 — Binary Lab**
-- source-qualified;
-- remains stacked on MIKEY-006 pending the preceding acceptance chain.
+**LEARN / CHALLENGE:** still SOON. Their interaction design and testable objectives are planned, not delivered, in [MIKEY-010 Readiness](docs/MIKEY-010-READINESS.md). Preserve PLAY behavior and the hardware adapter while implementing new modes in a separate future change.
 
-**MIKEY-008 — Logic Lab**
-- source-qualified;
-- remains stacked on MIKEY-007 pending the preceding acceptance chain.
-
-**MIKEY-009 — Debug Detective**
-- source candidate stacked on MIKEY-008;
-- source qualification requires Debug, Logic, Binary, Dice, and Simon native tests plus both Arduino compile jobs;
-- physical acceptance waits for the preceding milestones to be accepted and rebased in order.
+**Provenance:** the 2026-10-15 owner statement did not include exact flashing logs or per-item test receipts; see the [Core Seven Closeout](docs/CORE-SEVEN-CLOSEOUT-2026-10-15.md). No independent physical verification is claimed.
