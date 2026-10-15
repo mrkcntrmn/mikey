@@ -23,7 +23,7 @@ MikeyTechLab/
     ├── core/          # Activity contracts, registry, app state, input events
     ├── hardware/      # CrowPanel adapter (pins, display, touch, LEDs, encoder, RNG)
     ├── ui/            # Home menu + mode menu
-    └── activities/    # Jackpot + Reaction + Simon + Dice + Binary + Logic PLAY
+    └── activities/    # Core Seven PLAY activities
 ```
 
 Boot flow:
@@ -32,7 +32,7 @@ Boot flow:
 HOME → MODE SELECT → ACTIVITY
 ```
 
-Current PLAY-ready activities in the MIKEY-008 stacked candidate:
+Current PLAY-ready activities in the MIKEY-009 stacked candidate:
 
 ```text
 01 JACKPOT   PLAY READY
@@ -41,9 +41,10 @@ Current PLAY-ready activities in the MIKEY-008 stacked candidate:
 04 DICE      PLAY READY
 05 BINARY    PLAY READY
 06 LOGIC     PLAY READY
+07 DEBUG     PLAY READY
 ```
 
-All six activities share:
+All seven activities share:
 
 - the Activity contract;
 - the logical input-event model;
@@ -59,6 +60,8 @@ Digital Dice uses screen tap or encoder short-press to start a non-blocking roll
 Binary Lab explores values 0–15 as four bits. The display shows the decimal value, binary text, and four bit cells ordered **8, 4, 2, 1**. The first four physical LEDs mirror those bits; the fifth LED stays off so the four-bit representation is unambiguous. Rotate to explore values or press/tap to advance by one.
 
 Logic Lab turns physical inputs into Boolean inputs: touch toggles A, encoder short-press toggles B, and encoder rotation selects AND, OR, or NOT A. The screen shows A, B, and output separately; logical LEDs 0/1 mirror A/B and logical LED 4 mirrors the output.
+
+Debug Detective presents five short expected-versus-observed cases drawn from Binary, Logic, Simon, Reaction, and Dice. Encoder rotation chooses between two hypotheses and press/tap checks the diagnosis. The activity does not corrupt the earlier activities; it reuses their concepts as controlled diagnostic evidence.
 
 LEARN and CHALLENGE remain gated as SOON for all READY activities.
 

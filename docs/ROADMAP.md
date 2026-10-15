@@ -243,7 +243,13 @@ Planned physical exit criteria:
 
 ## MIKEY-008 — Logic Lab
 
-**Status:** source candidate development; stacked on MIKEY-007.
+**Status:** source-qualified; stacked on MIKEY-007.
+
+Source-qualified head:
+
+```text
+dab72f548d33dfd7d6aafc0fe4482ca900ae005b
+```
 
 Learning target: conditions and Boolean logic.
 
@@ -298,9 +304,61 @@ Planned physical exit criteria:
 
 ## MIKEY-009 — Debug Detective
 
-Implement Activity 07 and intentionally reuse faults from earlier activities.
+**Status:** source candidate development; stacked on MIKEY-008.
 
 Learning target: expected versus observed behavior, hypothesis, and evidence.
+
+Source candidate delivers:
+
+- Activity 07 promoted to PLAY READY;
+- five controlled diagnostic cases drawn from Binary, Logic, Simon, Reaction, and Dice;
+- each case presents an expected result and an observed mismatch;
+- encoder rotation selects between two hypotheses;
+- encoder short-press or screen tap checks the selected hypothesis;
+- incorrect diagnoses stay on the same case for retry;
+- correct diagnoses advance to the next case;
+- answer positions alternate so success cannot come from always choosing A;
+- completion after all five bugs are diagnosed;
+- hardware-independent `DebugSession` model;
+- native tests for answer key, option wraparound, retry behavior, progression, completion, and reset;
+- earlier activity implementations remain unchanged;
+- LEARN and CHALLENGE remain gated as SOON.
+
+Source qualification criteria:
+
+- Debug native session tests pass;
+- Logic native tests remain green;
+- Binary native tests remain green;
+- Dice native tests remain green;
+- Simon native tests remain green;
+- Mikey Tech Lab Arduino compile passes;
+- immutable Jackpot baseline compile passes;
+- no earlier activity is deliberately corrupted in runtime code.
+
+Dependency gate:
+
+- do not merge MIKEY-009 before MIKEY-005 through MIKEY-008 are accepted in order;
+- after preceding milestones merge, rebase/retarget MIKEY-009 onto accepted `main`;
+- rerun exact-head CI;
+- physical acceptance must use that exact post-rebase SHA.
+
+Planned physical exit criteria:
+
+- Home shows `07 DEBUG READY`;
+- DEBUG → PLAY opens bug 1 of 5;
+- clockwise/counter-clockwise selection moves between hypotheses;
+- press and tap each check exactly one hypothesis;
+- wrong answer remains on the same diagnostic case;
+- correct answer advances exactly one case;
+- Binary case identifies the incorrect 2s bit in 0111 vs expected 0101;
+- Logic case identifies an incorrect AND rule for A=1, B=0, observed output 1;
+- Simon case identifies the wrong second step;
+- Reaction case identifies a timer that failed to update from 0 ms;
+- Dice case identifies a counter incrementing twice;
+- all five solved cases reach completion;
+- reset returns to bug 1;
+- long-press Home exits cleanly;
+- Jackpot, Reaction Racer, Simon, Dice, Binary, and Logic regressions pass.
 
 ## MIKEY-010 — Phase 1 Review
 
