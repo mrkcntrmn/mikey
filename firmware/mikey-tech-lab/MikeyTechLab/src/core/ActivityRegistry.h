@@ -5,6 +5,14 @@
 
 #include "Activity.h"
 
+// Explicit opt-in for device-only physical acceptance. Normal builds stay SOON.
+#ifndef MIKEY_ENABLE_BINARY_GUIDED_PREVIEW
+#define MIKEY_ENABLE_BINARY_GUIDED_PREVIEW 0
+#endif
+#if MIKEY_ENABLE_BINARY_GUIDED_PREVIEW != 0 && MIKEY_ENABLE_BINARY_GUIDED_PREVIEW != 1
+#error "MIKEY_ENABLE_BINARY_GUIDED_PREVIEW must be 0 or 1"
+#endif
+
 namespace mikey {
 
 struct ActivityDescriptor {
@@ -65,10 +73,13 @@ inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
     case ActivityId::Reaction:
     case ActivityId::Simon:
     case ActivityId::Dice:
-    case ActivityId::Binary:
     case ActivityId::Logic:
     case ActivityId::Debugging:
       return mode == ActivityMode::Play;
+    case ActivityId::Binary:
+      return mode == ActivityMode::Play ||
+             (MIKEY_ENABLE_BINARY_GUIDED_PREVIEW &&
+              (mode == ActivityMode::Learn || mode == ActivityMode::Challenge));
     default:
       return false;
   }
