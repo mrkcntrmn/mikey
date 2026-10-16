@@ -8,6 +8,8 @@
 #include "BinaryGuidedSession.h"
 #include "LogicActivity.h"
 #include "LogicGuidedSession.h"
+#include "SimonActivity.h"
+#include "SimonGuidedSession.h"
 
 using namespace mikey;
 
@@ -128,14 +130,56 @@ static void drawEveryLogicGuidedFrame(RoundScreenProbe& hw, ActivityMode mode) {
   activity.end();
 }
 
+static void drawEverySimonGuidedFrame(RoundScreenProbe& hw, ActivityMode mode) {
+  SimonActivity activity(hw);
+  ActivityContext ctx;
+  ctx.mode = mode;
+  SimonGuidedSession model;
+  model.reset(mode);
+  activity.begin(ctx);
+  assert(!activity.exitRequested());
+  for (uint8_t i = 0; i < model.questionCount(); ++i) {
+    // Wrong answer first to exercise retry geometry; all targets are nonzero.
+    activity.handleInput(press());
+    activity.update();
+    model.submit();
+    assert(model.wrongAttempt());
+
+    // Walk rotary selection to expected light, checking every selected frame.
+    for (uint8_t steps = 0; steps < SimonSequence::kLightCount &&
+                             model.selectedLight() != model.expectedLight(); ++steps) {
+      activity.handleInput(turn());
+      activity.update();
+      model.rotate(1);
+    }
+    assert(model.selectedLight() == model.expectedLight());
+    activity.handleInput(press());
+    activity.update(); // Observe.
+    model.submit();
+    activity.handleInput(press());
+    activity.update(); // Explain.
+    model.submit();
+    activity.handleInput(press());
+    activity.update(); // Next prediction or Complete.
+    model.submit();
+  }
+  assert(model.phase() == SimonGuidedSession::Phase::Complete);
+  activity.handleInput(press());
+  activity.update();
+  activity.end();
+}
+
 int main() {
   assert(MIKEY_ENABLE_BINARY_GUIDED_PREVIEW == 1);
   assert(MIKEY_ENABLE_LOGIC_GUIDED_PREVIEW == 1);
+  assert(MIKEY_ENABLE_SIMON_GUIDED_PREVIEW == 1);
   RoundScreenProbe hw;
   drawEveryBinaryGuidedFrame(hw, ActivityMode::Learn);
   drawEveryBinaryGuidedFrame(hw, ActivityMode::Challenge);
   drawEveryLogicGuidedFrame(hw, ActivityMode::Learn);
   drawEveryLogicGuidedFrame(hw, ActivityMode::Challenge);
+  drawEverySimonGuidedFrame(hw, ActivityMode::Learn);
+  drawEverySimonGuidedFrame(hw, ActivityMode::Challenge);
   assert(hw.frames >= 20);
   assert(hw.textCalls >= 80);
   assert(hw.ledFrames >= hw.frames);
