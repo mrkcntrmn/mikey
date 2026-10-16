@@ -3,7 +3,7 @@
 #include "../core/Activity.h"
 #include "../core/InputEvent.h"
 #include "../hardware/Hardware.h"
-#include "DiceSession.h"
+#include "DualDiceSession.h"
 #include "DiceGuidedSession.h"
 
 namespace mikey {
@@ -36,17 +36,18 @@ class DiceActivity : public Activity {
   void finishRoll();
   void renderFrame();
   void renderGuidedFrame();
-  void drawDieFace(uint8_t face, uint16_t color);
-  void showFaceLeds(uint8_t face);
+  void drawDieFace(uint8_t face, int16_t centerX, uint16_t color);
+  void showFaceLeds(uint8_t left, uint8_t right);
   uint16_t faceColor(uint8_t face) const;
   void faceLedColor(uint8_t face, uint8_t& r, uint8_t& g, uint8_t& b) const;
 
   Hardware& hardware_;
-  DiceSession session_;
+  DualDiceSession session_;
   DiceGuidedSession guided_;
   bool guidedMode_ = false;
   DiceState state_ = DiceState::Ready;
-  uint8_t currentFace_ = 1;
+  uint8_t leftFace_ = 1;
+  uint8_t rightFace_ = 1;
   uint8_t framesRemaining_ = 0;
   uint32_t nextFrameMs_ = 0;
   bool exitRequested_ = false;
