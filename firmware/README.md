@@ -57,6 +57,8 @@ Simon Lights uses the five logical LEDs as five ordered symbols. During input, t
 
 Digital Dice uses screen tap or encoder short-press to start a non-blocking roll animation. The final result is one of six die faces. The screen shows standard pip patterns, roll number, and how many times the current face has appeared during the session. LED color changes with the face as a physical output cue. The displayed session frequency is observational; PLAY does not claim that a short run must look evenly distributed.
 
+> **MIKEY-010F draft-only proposal:** [Dual Dice](../docs/MIKEY-010F-DUAL-DICE-PILOT.md) changes the existing one-die PLAY design to **two independently rolled six-sided dice**. The candidate renders two faces, the sum 2–12, observed sum frequencies, and a center-LED doubles cue. This is a **new PLAY behavior requiring fresh CrowPanel physical acceptance**, not an already accepted change on `main`. The original DiceSession remains unchanged for historical tests; the new DualDiceSession handles paired results. Dice LEARN/CHALLENGE are separately default-OFF until physically accepted and authorized.
+
 Binary Lab explores values 0–15 as four bits. The display shows the decimal value, binary text, and four bit cells ordered **8, 4, 2, 1**. The first four physical LEDs mirror those bits; the fifth LED stays off so the four-bit representation is unambiguous. Rotate to explore values or press/tap to advance by one.
 
 Logic Lab turns physical inputs into Boolean inputs: touch toggles A, encoder short-press toggles B, and encoder rotation selects AND, OR, or NOT A. The screen shows A, B, and output separately; logical LEDs 0/1 mirror A/B and logical LED 4 mirrors the output.
