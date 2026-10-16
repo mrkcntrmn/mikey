@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 
+#include "../core/ActivityRegistry.h"
+
 namespace mikey {
 
 SimonActivity::SimonActivity(Hardware& hardware) : hardware_(hardware) {}
@@ -10,10 +12,24 @@ ActivityId SimonActivity::id() const { return ActivityId::Simon; }
 
 const char* SimonActivity::name() const { return "SIMON"; }
 
-void SimonActivity::begin(const ActivityContext& /*context*/) {
+void SimonActivity::begin(const ActivityContext& context) {
   exitRequested_ = false;
-  resetSession();
-  renderFrame();
+  guidedMode_ = context.mode != ActivityMode::Play;
+  dirty_ = true;
+  if (guidedMode_) {
+    if (!isModeAvailable(ActivityId::Simon, context.mode)) {
+      // Keep default builds closed even if begin() is invoked directly.
+      exitRequested_ = true;
+      hardware_.clearLeds();
+      hardware_.showLeds();
+      return;
+    }
+    guided_.reset(context.mode);
+    renderGuidedFrame();
+  } else {
+    resetSession();
+    renderFrame(); // Accepted PLAY path.
+  }
   dirty_ = false;
 }
 
@@ -38,6 +54,20 @@ void SimonActivity::resetSession() {
 void SimonActivity::handleInput(const InputFrame& input) {
   if (input.encoderLongPress) {
     exitRequested_ = true;
+    return;
+  }
+
+  if (exitRequested_) return;
+  if (guidedMode_) {
+    // Priority prevents a frame containing rotary + press from double-acting.
+    if (input.encoderClockwise) {
+      dirty_ = guided_.rotate(1) || dirty_;
+    } else if (input.encoderCounterClockwise) {
+      dirty_ = guided_.rotate(-1) || dirty_;
+    } else if (input.encoderShortPress || input.touchPress) {
+      guided_.submit();
+      dirty_ = true;
+    }
     return;
   }
 
@@ -79,6 +109,14 @@ void SimonActivity::handleInput(const InputFrame& input) {
 }
 
 void SimonActivity::update() {
+  if (exitRequested_) return;
+  if (guidedMode_) {
+    if (dirty_) {
+      renderGuidedFrame();
+      dirty_ = false;
+    }
+    return;
+  }
   const uint32_t now = hardware_.nowMs();
 
   if (state_ == SimonState::PlaybackOn &&
@@ -341,6 +379,74 @@ void SimonActivity::renderFrame() {
       break;
   }
 
+  hardware_.presentFrame();
+}
+
+void SimonActivity::renderGuidedFrame() {
+  const bool lesson = guided_.mode() == ActivityMode::Learn;
+  const SimonGuidedSession::Phase phase = guided_.phase();
+  hardware_.clearFrame(kColorBlack);
+  hardware_.drawCenteredText(lesson ? "SIMON LEARN" : "SIMON CHALLENGE",
+                             39, lesson ? 2 : 1, kColorYellow);
+
+  if (phase == SimonGuidedSession::Phase::Complete) {
+    hardware_.drawCenteredText("GREAT JOB", 109, 3, kColorGreen);
+    hardware_.drawCenteredText("ORDER REMEMBERED", 158, 1, kColorWhite);
+    hardware_.drawCenteredText("PRESS TO REPLAY", 199, 1, kColorCyan);
+    hardware_.clearLeds();
+    hardware_.showLeds();
+  } else {
+    char count[20];
+    snprintf(count, sizeof(count), "%u OF %u",
+             static_cast<unsigned>(guided_.questionIndex() + 1),
+             static_cast<unsigned>(guided_.questionCount()));
+    hardware_.drawCenteredText(count, 63, 1, kColorWhite);
+
+    if (phase == SimonGuidedSession::Phase::Predict) {
+      // Prefix uses one-based light numbers, with final step concealed.
+      char prefix[22] = {};
+      unsigned used = 0;
+      for (uint8_t i = 0; i < guided_.prefixLength(); ++i) {
+        const int size = snprintf(prefix + used, sizeof(prefix) - used, "%s%u",
+               i == 0 ? "" : "-",
+               static_cast<unsigned>(guided_.prefixAt(i) + 1));
+        if (size <= 0 || static_cast<unsigned>(size) >= sizeof(prefix) - used) break;
+        used += static_cast<unsigned>(size);
+      }
+      snprintf(prefix + used, sizeof(prefix) - used, "-?");
+      hardware_.drawCenteredText(prefix, 99, 2, kColorWhite);
+      drawLightRow(guided_.selectedLight(), true);
+      char selection[20];
+      snprintf(selection, sizeof(selection), "CHOOSE LIGHT %u",
+               static_cast<unsigned>(guided_.selectedLight() + 1));
+      hardware_.drawCenteredText(selection, 173, 1, kColorCyan);
+      hardware_.drawCenteredText(guided_.wrongAttempt()
+                                     ? "TRY AGAIN"
+                                     : "TURN THEN PRESS/TAP",
+                                 200, 1,
+                                 guided_.wrongAttempt() ? kColorYellow : kColorWhite);
+      // Selected choice is drawn but the physical LED never reveals the answer.
+      hardware_.clearLeds();
+      hardware_.showLeds();
+    } else if (phase == SimonGuidedSession::Phase::Observe) {
+      char answer[20];
+      snprintf(answer, sizeof(answer), "NEXT IS LIGHT %u",
+               static_cast<unsigned>(guided_.expectedLight() + 1));
+      hardware_.drawCenteredText("OBSERVE", 87, 2, kColorCyan);
+      hardware_.drawCenteredText(answer, 112, 1, kColorWhite);
+      drawLightRow(guided_.expectedLight(), false);
+      hardware_.drawCenteredText("WATCH THE LED", 177, 1, kColorWhite);
+      hardware_.drawCenteredText("PRESS FOR WHY", 201, 1, kColorCyan);
+      showSingleLed(guided_.expectedLight(), false);
+    } else {
+      hardware_.drawCenteredText("EXPLAIN", 92, 2, kColorCyan);
+      hardware_.drawCenteredText(guided_.explanation(), 134, 1, kColorWhite);
+      hardware_.drawCenteredText("ORDER MATTERS", 174, 1, kColorWhite);
+      hardware_.drawCenteredText("PRESS FOR NEXT", 201, 1, kColorCyan);
+      showSingleLed(guided_.expectedLight(), false);
+    }
+  }
+  hardware_.drawCenteredText("HOLD FOR HOME", 225, 1, kColorGray);
   hardware_.presentFrame();
 }
 
