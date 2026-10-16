@@ -28,7 +28,7 @@ The model `DualDiceSession` handles validity, sums, completed-pair counting, per
 | CHALLENGE | Must total be 7? | NO | 2+4=6 | Other sums occur |
 | CHALLENGE | Can total be 12? | YES | 6+6=12 | 6 plus 6 is 12 |
 | CHALLENGE | Always even sum? | NO | 1+2=3 | 1 plus 2 is odd |
-| CHALLENGE | More ways for 7? | YES | 3+4=7 | 7 has six ordered pairs; 2 has one |
+| CHALLENGE | More ways for 7 than 2? | YES | 3+4=7 | 7 has six ordered pairs; 2 has one |
 
 A single fixed example may illustrate the stated mathematical concept without constituting a statistical experiment. In particular, the **"Must total be 7?"** case is a conceptual question; the sample of 2+5=7 is *one possibility*, not evidence that 7 must or must not recur. The explanation describes the full possible total range. For a probability observation, use real PLAY rolls and ask what is possible versus what must occur.
 
