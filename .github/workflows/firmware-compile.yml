@@ -141,6 +141,24 @@ jobs:
             -o /tmp/logic-guided-both
           /tmp/logic-guided-both
 
+  guided-display-layout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check every guided frame against conservative round-screen bounds
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 \
+            -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/guided_round_layout_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/BinaryActivity.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
+            -o /tmp/guided-display-layout
+          /tmp/guided-display-layout
+
   debug-logic:
     runs-on: ubuntu-latest
     steps:
