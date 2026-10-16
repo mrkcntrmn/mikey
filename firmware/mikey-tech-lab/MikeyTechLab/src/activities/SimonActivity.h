@@ -4,6 +4,7 @@
 #include "../core/InputEvent.h"
 #include "../hardware/Hardware.h"
 #include "SimonSequence.h"
+#include "SimonGuidedSession.h"
 
 namespace mikey {
 
@@ -36,6 +37,7 @@ class SimonActivity : public Activity {
   static constexpr uint32_t kSuccessHoldMs = 900;
 
   void resetSession();
+  void renderGuidedFrame();
   void beginPlayback();
   void enterInput();
   void submitSelected();
@@ -53,6 +55,8 @@ class SimonActivity : public Activity {
 
   Hardware& hardware_;
   SimonSequence sequence_;
+  SimonGuidedSession guided_;
+  bool guidedMode_ = false;
   SimonState state_ = SimonState::Ready;
   uint8_t playbackIndex_ = 0;
   uint8_t selectedLight_ = 0;
