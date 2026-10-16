@@ -49,7 +49,7 @@ inline constexpr ActivityDescriptor kActivityRegistry[] = {
     {ActivityId::Jackpot, "JACKPOT", true},
     {ActivityId::Reaction, "REACTION", true},
     {ActivityId::Simon, "SIMON", true},
-    {ActivityId::Dice, "DICE", true},
+    {ActivityId::Dice, "DUAL DICE", true},
     {ActivityId::Binary, "BINARY", true},
     {ActivityId::Logic, "LOGIC", true},
     {ActivityId::Debugging, "DEBUG", true},
