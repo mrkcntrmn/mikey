@@ -46,12 +46,14 @@ static InputFrame press() {
   input.touchPress = true; // One frame is exactly one submit.
   return input;
 }
+#if MIKEY_ENABLE_SIMON_GUIDED_PREVIEW
 static InputFrame turn(bool clockwise = true) {
   InputFrame input;
   input.encoderClockwise = clockwise;
   input.encoderCounterClockwise = !clockwise;
   return input;
 }
+#endif
 static void expectAllOff(const FakeHardware& hw) {
   for (bool led : hw.leds) assert(!led);
 }
@@ -66,8 +68,11 @@ static void testGate() {
          static_cast<bool>(MIKEY_ENABLE_BINARY_GUIDED_PREVIEW));
   assert(isModeAvailable(ActivityId::Logic, ActivityMode::Challenge) ==
          static_cast<bool>(MIKEY_ENABLE_LOGIC_GUIDED_PREVIEW));
-  for (ActivityId other : {ActivityId::Jackpot, ActivityId::Reaction,
-                           ActivityId::Dice, ActivityId::Debugging}) {
+  const ActivityId others[] = {
+      ActivityId::Jackpot, ActivityId::Reaction,
+      ActivityId::Dice, ActivityId::Debugging,
+  };
+  for (ActivityId other : others) {
     assert(isModeAvailable(other, ActivityMode::Play));
     assert(!isModeAvailable(other, ActivityMode::Learn));
     assert(!isModeAvailable(other, ActivityMode::Challenge));
