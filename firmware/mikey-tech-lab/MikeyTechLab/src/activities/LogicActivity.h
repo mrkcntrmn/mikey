@@ -4,6 +4,7 @@
 #include "../core/InputEvent.h"
 #include "../hardware/Hardware.h"
 #include "LogicState.h"
+#include "LogicGuidedSession.h"
 
 namespace mikey {
 
@@ -22,12 +23,17 @@ class LogicActivity : public Activity {
 
  private:
   void renderFrame();
+  void renderGuidedFrame();
+  void showGuidedLeds();
+  static const char* guidedRuleName(LogicRule rule);
   void renderInputOutputRow();
   void showLogicLeds();
   const char* ruleName() const;
 
   Hardware& hardware_;
   LogicState state_;
+  LogicGuidedSession guided_;
+  bool guidedMode_ = false;
   bool exitRequested_ = false;
   bool dirty_ = true;
 };

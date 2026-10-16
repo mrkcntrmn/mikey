@@ -165,7 +165,7 @@ void BinaryActivity::renderGuidedFrame() {
   const BinaryGuidedSession::Phase phase = guided_.phase();
   hardware_.clearFrame(kColorBlack);
   hardware_.drawCenteredText(lesson ? "BINARY LEARN" : "BINARY QUIZ",
-                             29, 2, kColorYellow);
+                             35, 2, kColorYellow);
 
   if (phase == BinaryGuidedSession::Phase::Complete) {
     hardware_.drawCenteredText("ALL DONE!", 101, 3, kColorGreen);
