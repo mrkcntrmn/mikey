@@ -58,6 +58,33 @@ jobs:
       - name: Run Binary Lab value tests
         run: /tmp/binary-value-test
 
+  binary-guided:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify guided modes fail closed by default
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=0 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/binary_guided_session_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/BinaryActivity.cpp \
+            -o /tmp/binary-guided-off
+          /tmp/binary-guided-off
+
+      - name: Verify guided preview, answer safety and PLAY regression
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/binary_guided_session_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/BinaryActivity.cpp \
+            -o /tmp/binary-guided-on
+          /tmp/binary-guided-on
+
   logic-logic:
     runs-on: ubuntu-latest
     steps:
@@ -137,3 +164,31 @@ jobs:
 
       - name: Compile Mikey Tech Lab app shell
         run: arduino-cli compile --fqbn esp32:esp32:esp32s3 firmware/mikey-tech-lab/MikeyTechLab
+
+  mikey-tech-lab-guided-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Arduino CLI
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Configure ESP32 board index
+        run: |
+          arduino-cli config init
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core update-index
+
+      - name: Install pinned ESP32 core and libraries
+        run: |
+          arduino-cli core install esp32:esp32@3.3.8
+          arduino-cli lib install 'LovyanGFX@1.2.26'
+          arduino-cli lib install 'Adafruit NeoPixel@1.15.1'
+
+      - name: Compile explicitly enabled acceptance candidate
+        run: |
+          arduino-cli compile \
+            --fqbn esp32:esp32:esp32s3 \
+            --build-property "compiler.cpp.extra_flags=-DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1" \
+            firmware/mikey-tech-lab/MikeyTechLab
+
