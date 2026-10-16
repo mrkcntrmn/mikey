@@ -100,6 +100,47 @@ jobs:
       - name: Run Logic Lab truth-table tests
         run: /tmp/logic-state-test
 
+  logic-guided:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Logic guided default OFF with Binary default OFF
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=0 \
+            -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=0 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/logic_guided_session_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
+            -o /tmp/logic-guided-off
+          /tmp/logic-guided-off
+
+      - name: Verify Logic guided preview independent of Binary
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=0 \
+            -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/logic_guided_session_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
+            -o /tmp/logic-guided-only
+          /tmp/logic-guided-only
+
+      - name: Verify Binary and Logic preview together
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 \
+            -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/logic_guided_session_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
+            -o /tmp/logic-guided-both
+          /tmp/logic-guided-both
+
   debug-logic:
     runs-on: ubuntu-latest
     steps:
@@ -189,6 +230,6 @@ jobs:
         run: |
           arduino-cli compile \
             --fqbn esp32:esp32:esp32s3 \
-            --build-property "compiler.cpp.extra_flags=-DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1" \
+            --build-property "compiler.cpp.extra_flags=-DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1" \
             firmware/mikey-tech-lab/MikeyTechLab
 
