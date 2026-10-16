@@ -1,4 +1,4 @@
-// Offline terminal preview of the real Binary/Logic activity implementations.
+// Offline terminal preview of Binary/Logic/Simon production activities.
 // This tool displays text and LED *commands*, not a pixel-faithful CrowPanel.
 #include <algorithm>
 #include <stdint.h>
@@ -9,6 +9,7 @@
 #include "ActivityRegistry.h"
 #include "BinaryActivity.h"
 #include "LogicActivity.h"
+#include "SimonActivity.h"
 
 using namespace mikey;
 
@@ -110,12 +111,14 @@ int main() {
   TerminalHardware hw;
   BinaryActivity binary(hw);
   LogicActivity logic(hw);
+  SimonActivity simon(hw);
   std::cout << "Mikey Tech Lab — OFFLINE guided preview\n";
   std::cout << "Display text and LEDs are emulated; no GPIO or board attached.\n";
 
   while (true) {
     std::cout << "\n1 Binary LEARN    2 Binary CHALLENGE\n"
                  "3 Logic LEARN     4 Logic CHALLENGE\n"
+                 "5 Simon LEARN     6 Simon CHALLENGE\n"
                  "q Quit\n> " << std::flush;
     std::string option;
     if (!std::getline(std::cin, option) || option == "q") return 0;
@@ -127,8 +130,11 @@ int main() {
     } else if (option == "3" || option == "4") {
       activity = &logic;
       mode = option == "3" ? ActivityMode::Learn : ActivityMode::Challenge;
+    } else if (option == "5" || option == "6") {
+      activity = &simon;
+      mode = option == "5" ? ActivityMode::Learn : ActivityMode::Challenge;
     } else {
-      std::cout << "Choose 1, 2, 3, 4, or q.\n";
+      std::cout << "Choose 1-6, or q.\n";
       continue;
     }
     if (!isModeAvailable(activity->id(), mode)) {
