@@ -207,15 +207,21 @@ void DiceActivity::renderFrame() {
     hardware_.drawCenteredText(rolls, 62, 1, kColorWhite);
   }
 
-  drawDieFace(leftFace_, 72, faceColor(leftFace_));
-  drawDieFace(rightFace_, 168, faceColor(rightFace_));
-
-  char total[28];
   const uint8_t sum = DualDiceSession::sum(leftFace_, rightFace_);
-  snprintf(total, sizeof(total), "%u + %u = %u",
-           static_cast<unsigned>(leftFace_), static_cast<unsigned>(rightFace_),
-           static_cast<unsigned>(sum));
-  hardware_.drawCenteredText(total, 177, 2, kColorGreen);
+  if (state_ == DiceState::Ready) {
+    // Don't present initial placeholder faces as if a roll took place.
+    hardware_.drawCircle(72, 119, 40, kColorWhite);
+    hardware_.drawCircle(168, 119, 40, kColorWhite);
+    hardware_.drawCenteredText("READY TO ROLL BOTH", 177, 1, kColorGreen);
+  } else {
+    drawDieFace(leftFace_, 72, faceColor(leftFace_));
+    drawDieFace(rightFace_, 168, faceColor(rightFace_));
+    char total[28];
+    snprintf(total, sizeof(total), "%u + %u = %u",
+             static_cast<unsigned>(leftFace_), static_cast<unsigned>(rightFace_),
+             static_cast<unsigned>(sum));
+    hardware_.drawCenteredText(total, 177, 2, kColorGreen);
+  }
   if (state_ == DiceState::Result) {
     char stats[32];
     snprintf(stats, sizeof(stats), "SUM %u SEEN %lu",
