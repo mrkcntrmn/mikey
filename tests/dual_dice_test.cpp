@@ -63,11 +63,13 @@ static InputFrame press() {
   f.touchPress = true;
   return f;
 }
+#if MIKEY_ENABLE_DICE_GUIDED_PREVIEW
 static InputFrame rotate() {
   InputFrame f;
   f.encoderClockwise = true;
   return f;
 }
+#endif
 static void checkOff(const FakeHardware& hw) {
   for (bool led : hw.leds) assert(!led);
 }
