@@ -29,6 +29,14 @@
 #error "MIKEY_ENABLE_SIMON_GUIDED_PREVIEW must be 0 or 1"
 #endif
 
+// Independent dice teaching preview. Never enabled in the ordinary build.
+#ifndef MIKEY_ENABLE_DICE_GUIDED_PREVIEW
+#define MIKEY_ENABLE_DICE_GUIDED_PREVIEW 0
+#endif
+#if MIKEY_ENABLE_DICE_GUIDED_PREVIEW != 0 && MIKEY_ENABLE_DICE_GUIDED_PREVIEW != 1
+#error "MIKEY_ENABLE_DICE_GUIDED_PREVIEW must be 0 or 1"
+#endif
+
 namespace mikey {
 
 struct ActivityDescriptor {
@@ -41,7 +49,7 @@ inline constexpr ActivityDescriptor kActivityRegistry[] = {
     {ActivityId::Jackpot, "JACKPOT", true},
     {ActivityId::Reaction, "REACTION", true},
     {ActivityId::Simon, "SIMON", true},
-    {ActivityId::Dice, "DICE", true},
+    {ActivityId::Dice, "DUAL DICE", true},
     {ActivityId::Binary, "BINARY", true},
     {ActivityId::Logic, "LOGIC", true},
     {ActivityId::Debugging, "DEBUG", true},
@@ -87,7 +95,6 @@ inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
   switch (activity) {
     case ActivityId::Jackpot:
     case ActivityId::Reaction:
-    case ActivityId::Dice:
     case ActivityId::Debugging:
       return mode == ActivityMode::Play;
     case ActivityId::Binary:
@@ -101,6 +108,10 @@ inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
     case ActivityId::Simon:
       return mode == ActivityMode::Play ||
              (MIKEY_ENABLE_SIMON_GUIDED_PREVIEW &&
+              (mode == ActivityMode::Learn || mode == ActivityMode::Challenge));
+    case ActivityId::Dice:
+      return mode == ActivityMode::Play ||
+             (MIKEY_ENABLE_DICE_GUIDED_PREVIEW &&
               (mode == ActivityMode::Learn || mode == ActivityMode::Challenge));
     default:
       return false;

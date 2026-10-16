@@ -10,6 +10,8 @@
 #include "LogicGuidedSession.h"
 #include "SimonActivity.h"
 #include "SimonGuidedSession.h"
+#include "DiceActivity.h"
+#include "DiceGuidedSession.h"
 
 using namespace mikey;
 
@@ -22,8 +24,19 @@ class RoundScreenProbe final : public Hardware {
   uint32_t randomRange(uint32_t, uint32_t) override { return 0; }
   InputFrame pollInput() override { return {}; }
   void clearFrame(uint16_t) override {}
-  void fillCircle(int16_t, int16_t, int16_t, uint16_t) override {}
-  void drawCircle(int16_t, int16_t, int16_t, uint16_t) override {}
+  static void checkCircle(int16_t x, int16_t y, int16_t radius) {
+    // Deliberately conservative: if an enclosing square is in the round
+    // display, all pixels of the circle also fit.
+    const int32_t dx = (x > 120 ? x - 120 : 120 - x) + radius;
+    const int32_t dy = (y > 120 ? y - 120 : 120 - y) + radius;
+    assert(dx * dx + dy * dy <= 120 * 120);
+  }
+  void fillCircle(int16_t x, int16_t y, int16_t r, uint16_t) override {
+    checkCircle(x, y, r);
+  }
+  void drawCircle(int16_t x, int16_t y, int16_t r, uint16_t) override {
+    checkCircle(x, y, r);
+  }
   void drawCenteredText(const char* value, int16_t centerY, uint8_t size, uint16_t) override {
     const int32_t textHalfWidth = (static_cast<int32_t>(strlen(value)) * 6 * size + 1) / 2;
     const int32_t textHalfHeight = 4 * size;
@@ -169,10 +182,52 @@ static void drawEverySimonGuidedFrame(RoundScreenProbe& hw, ActivityMode mode) {
   activity.end();
 }
 
+static void drawEveryDiceGuidedFrame(RoundScreenProbe& hw, ActivityMode mode) {
+  DiceActivity activity(hw);
+  ActivityContext ctx;
+  ctx.mode = mode;
+  DiceGuidedSession model;
+  model.reset(mode);
+  activity.begin(ctx);
+  assert(!activity.exitRequested());
+
+  for (uint8_t i = 0; i < model.questionCount(); ++i) {
+    // Wrong guess first, so the retry text also gets geometry checked.
+    if (model.selectedYes() == model.question().correctYes) {
+      activity.handleInput(turn());
+      activity.update();
+      model.rotate(1);
+    }
+    activity.handleInput(press());
+    activity.update();
+    model.submit();
+    assert(model.retry());
+    // Toggle to the correct answer, then show every subsequent phase.
+    activity.handleInput(turn());
+    activity.update();
+    model.rotate(1);
+    assert(model.selectedYes() == model.question().correctYes);
+    activity.handleInput(press());
+    activity.update();
+    model.submit(); // Observe.
+    activity.handleInput(press());
+    activity.update();
+    model.submit(); // Explain.
+    activity.handleInput(press());
+    activity.update();
+    model.submit(); // Next or complete.
+  }
+  assert(model.phase() == DiceGuidedSession::Phase::Complete);
+  activity.handleInput(press());
+  activity.update();
+  activity.end();
+}
+
 int main() {
   assert(MIKEY_ENABLE_BINARY_GUIDED_PREVIEW == 1);
   assert(MIKEY_ENABLE_LOGIC_GUIDED_PREVIEW == 1);
   assert(MIKEY_ENABLE_SIMON_GUIDED_PREVIEW == 1);
+  assert(MIKEY_ENABLE_DICE_GUIDED_PREVIEW == 1);
   RoundScreenProbe hw;
   drawEveryBinaryGuidedFrame(hw, ActivityMode::Learn);
   drawEveryBinaryGuidedFrame(hw, ActivityMode::Challenge);
@@ -180,6 +235,8 @@ int main() {
   drawEveryLogicGuidedFrame(hw, ActivityMode::Challenge);
   drawEverySimonGuidedFrame(hw, ActivityMode::Learn);
   drawEverySimonGuidedFrame(hw, ActivityMode::Challenge);
+  drawEveryDiceGuidedFrame(hw, ActivityMode::Learn);
+  drawEveryDiceGuidedFrame(hw, ActivityMode::Challenge);
   assert(hw.frames >= 20);
   assert(hw.textCalls >= 80);
   assert(hw.ledFrames >= hw.frames);
