@@ -4,6 +4,7 @@
 #include "../core/InputEvent.h"
 #include "../hardware/Hardware.h"
 #include "DiceSession.h"
+#include "DiceGuidedSession.h"
 
 namespace mikey {
 
@@ -34,6 +35,7 @@ class DiceActivity : public Activity {
   void advanceRoll();
   void finishRoll();
   void renderFrame();
+  void renderGuidedFrame();
   void drawDieFace(uint8_t face, uint16_t color);
   void showFaceLeds(uint8_t face);
   uint16_t faceColor(uint8_t face) const;
@@ -41,6 +43,8 @@ class DiceActivity : public Activity {
 
   Hardware& hardware_;
   DiceSession session_;
+  DiceGuidedSession guided_;
+  bool guidedMode_ = false;
   DiceState state_ = DiceState::Ready;
   uint8_t currentFace_ = 1;
   uint8_t framesRemaining_ = 0;
