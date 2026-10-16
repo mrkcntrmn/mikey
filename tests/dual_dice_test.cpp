@@ -17,6 +17,7 @@ class FakeHardware final : public Hardware {
   uint32_t now = 0;
   unsigned frames = 0;
   bool leds[5] = {};
+  uint32_t colors[5] = {};
   bool retrySeen = false;
   bool sampleSeen = false;
   bool sumSevenSeen = false;
@@ -49,10 +50,17 @@ class FakeHardware final : public Hardware {
     if (strcmp(t, "SUM 7 SEEN 1") == 0) rollRecorded = true;
   }
   void presentFrame() override { ++frames; }
-  void clearLeds() override { for (bool& led : leds) led = false; }
+  void clearLeds() override {
+    for (int i = 0; i < 5; ++i) {
+      leds[i] = false;
+      colors[i] = 0;
+    }
+  }
   void setLed(int i, uint8_t r, uint8_t g, uint8_t b) override {
     assert(i >= 0 && i < 5);
     leds[i] = r || g || b;
+    colors[i] = (static_cast<uint32_t>(r) << 16)
+              | (static_cast<uint32_t>(g) << 8) | b;
   }
   void showLeds() override {}
 };
@@ -180,17 +188,22 @@ static void testRealDualPlayPath() {
   activity.begin(ctx);
   assert(hw.frames == 1 && hw.randomCalls == 0);
   checkOff(hw);
+  activity.handleInput(press()); // A second press while rolling is ignored.
   activity.handleInput(press());
   advanceNineFrames(hw, activity);
   assert(hw.randomCalls == 18); // Two independent draws per each of nine frames.
   assert(hw.sumSevenSeen && hw.rollRecorded);
   assert(!hw.leds[2]); // 1 + 6 = 7: not doubles.
   assert(hw.leds[0] && hw.leds[1] && hw.leds[3] && hw.leds[4]);
+  assert(hw.colors[0] == hw.colors[1] && hw.colors[3] == hw.colors[4]);
+  assert(hw.colors[0] != hw.colors[3]); // Two distinct die cues.
   hw.randomMode = 1;
   activity.handleInput(press());
   advanceNineFrames(hw, activity);
   assert(hw.randomCalls == 36);
   assert(hw.sumEightSeen && hw.leds[2]); // 4 + 4 = 8, doubles cue.
+  assert(hw.colors[0] == hw.colors[3]); // Matching dice match LED colors.
+  assert(hw.colors[2] != hw.colors[0]); // Doubles indicator is distinct.
   InputFrame home;
   home.encoderLongPress = true;
   home.encoderShortPress = true;
