@@ -43,6 +43,30 @@ The proposed workflow checks:
 - A display-boundary **approximation**, on every Binary/Logic LEARN/CHALLENGE frame, using a 6×8 pixel default-font estimate and a circular 240×240 screen. This test is **not** a screenshot or physical visual acceptance. The Binary guided title is moved slightly downward to provide estimated round-screen margin.
 - Standard ESP32 firmware compile, explicitly preview-enabled ESP32 firmware compile (both flags enabled), and immutable Jackpot baseline compile.
 
+### Try both lessons without a CrowPanel
+
+A terminal-only preview in `tools/guided-lab-cli.cpp` reuses the **production BinaryActivity/LogicActivity classes** with a fake `Hardware` implementation. It prints all display-text commands and the five logical LED states; it does **not** draw a pixel-accurate 240×240 display, emulate real electronics, or substitute for physical acceptance.
+
+On Linux (with g++), from the repository root:
+
+```bash
+g++ -std=c++17 -Wall -Wextra -Werror \
+  -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 \
+  -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1 \
+  -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
+  -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+  tools/guided-lab-cli.cpp \
+  firmware/mikey-tech-lab/MikeyTechLab/src/activities/BinaryActivity.cpp \
+  firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
+  -o /tmp/mikey-guided-preview
+
+/tmp/mikey-guided-preview
+```
+
+Choose 1/2/3/4 for Binary LEARN, Binary CHALLENGE, Logic LEARN, or Logic CHALLENGE. Use `a` or `<` to turn left, `d` or `>` to turn right, Enter/`p` for encoder press, `t` for touch, `h` to return Home, and `q` to quit. You can deliberately submit wrong answers to inspect retry behavior.
+
+The CI job `guided-terminal-preview` builds this exact host program, exercises all four menu paths and a wrong-answer case, and verifies that an unflagged build remains SOON. These are **software tests**, not device acceptance.
+
 ### Build commands for later physical evaluation
 
 Ordinary release-like build, guided modes OFF:
