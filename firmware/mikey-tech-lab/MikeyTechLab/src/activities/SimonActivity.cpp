@@ -393,8 +393,6 @@ void SimonActivity::renderGuidedFrame() {
     hardware_.drawCenteredText("GREAT JOB", 109, 3, kColorGreen);
     hardware_.drawCenteredText("ORDER REMEMBERED", 158, 1, kColorWhite);
     hardware_.drawCenteredText("PRESS TO REPLAY", 199, 1, kColorCyan);
-    hardware_.clearLeds();
-    hardware_.showLeds();
   } else {
     char count[20];
     snprintf(count, sizeof(count), "%u OF %u",
@@ -426,8 +424,6 @@ void SimonActivity::renderGuidedFrame() {
                                  200, 1,
                                  guided_.wrongAttempt() ? kColorYellow : kColorWhite);
       // Selected choice is drawn but the physical LED never reveals the answer.
-      hardware_.clearLeds();
-      hardware_.showLeds();
     } else if (phase == SimonGuidedSession::Phase::Observe) {
       char answer[20];
       snprintf(answer, sizeof(answer), "NEXT IS LIGHT %u",
@@ -437,17 +433,22 @@ void SimonActivity::renderGuidedFrame() {
       drawLightRow(guided_.expectedLight(), false);
       hardware_.drawCenteredText("WATCH THE LED", 177, 1, kColorWhite);
       hardware_.drawCenteredText("PRESS FOR WHY", 201, 1, kColorCyan);
-      showSingleLed(guided_.expectedLight(), false);
     } else {
       hardware_.drawCenteredText("EXPLAIN", 92, 2, kColorCyan);
       hardware_.drawCenteredText(guided_.explanation(), 134, 1, kColorWhite);
       hardware_.drawCenteredText("ORDER MATTERS", 174, 1, kColorWhite);
       hardware_.drawCenteredText("PRESS FOR NEXT", 201, 1, kColorCyan);
-      showSingleLed(guided_.expectedLight(), false);
     }
   }
   hardware_.drawCenteredText("HOLD FOR HOME", 225, 1, kColorGray);
   hardware_.presentFrame();
+  if (phase == SimonGuidedSession::Phase::Observe ||
+      phase == SimonGuidedSession::Phase::Explain) {
+    showSingleLed(guided_.expectedLight(), false);
+  } else {
+    hardware_.clearLeds();
+    hardware_.showLeds();
+  }
 }
 
 }  // namespace mikey
