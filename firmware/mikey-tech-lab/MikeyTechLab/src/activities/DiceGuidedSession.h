@@ -88,7 +88,7 @@ class DiceGuidedSession {
       {"CAN TOTAL BE 7?", true, 3, 4, "3 PLUS 4 IS 7"},
   };
   inline static constexpr Question kChallenge[] = {
-      {"MUST TOTAL BE 7?", false, 2, 5, "ANY TOTAL 2 TO 12"},
+      {"MUST TOTAL BE 7?", false, 2, 4, "OTHER SUMS OCCUR"},
       {"CAN TOTAL BE 12?", true, 6, 6, "6 PLUS 6 IS 12"},
       {"ALWAYS EVEN SUM?", false, 1, 2, "1 PLUS 2 IS ODD"},
       {"MORE WAYS FOR 7?", true, 3, 4, "SIX WAYS VS ONE"},
