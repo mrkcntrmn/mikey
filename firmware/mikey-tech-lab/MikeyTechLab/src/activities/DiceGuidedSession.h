@@ -91,7 +91,7 @@ class DiceGuidedSession {
       {"MUST TOTAL BE 7?", false, 2, 4, "OTHER SUMS OCCUR"},
       {"CAN TOTAL BE 12?", true, 6, 6, "6 PLUS 6 IS 12"},
       {"ALWAYS EVEN SUM?", false, 1, 2, "1 PLUS 2 IS ODD"},
-      {"MORE WAYS FOR 7?", true, 3, 4, "SIX WAYS VS ONE"},
+      {"MORE WAYS 7 VS 2?", true, 3, 4, "SIX WAYS VS ONE"},
   };
   static constexpr uint8_t kLearnCount =
       static_cast<uint8_t>(sizeof(kLearn) / sizeof(kLearn[0]));
