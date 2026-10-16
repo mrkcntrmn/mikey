@@ -178,7 +178,7 @@ jobs:
 
       - name: Smoke-test Binary and Logic LEARN and CHALLENGE navigation
         run: |
-          printf '1\\nh\\n2\\nh\\n3\\nh\\n4\\nh\\nq\\n' | /tmp/mikey-guided-preview > /tmp/guided-screens.txt
+          printf '1\nh\n2\nh\n3\nh\n4\nh\nq\n' | /tmp/mikey-guided-preview > /tmp/guided-screens.txt
           grep -q 'BINARY LEARN' /tmp/guided-screens.txt
           grep -q 'BINARY QUIZ' /tmp/guided-screens.txt
           grep -q 'LOGIC LEARN' /tmp/guided-screens.txt
@@ -187,7 +187,7 @@ jobs:
 
       - name: Smoke-test wrong prediction displays retry instead of answer
         run: |
-          printf '1\\nd\\np\\nh\\nq\\n' | /tmp/mikey-guided-preview > /tmp/guided-retry.txt
+          printf '1\nd\np\nh\nq\n' | /tmp/mikey-guided-preview > /tmp/guided-retry.txt
           grep -q 'TRY AGAIN' /tmp/guided-retry.txt
 
       - name: Verify unflagged desktop build shows SOON
@@ -199,7 +199,7 @@ jobs:
             firmware/mikey-tech-lab/MikeyTechLab/src/activities/BinaryActivity.cpp \
             firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
             -o /tmp/mikey-guided-preview-off
-          printf '1\\n3\\nq\\n' | /tmp/mikey-guided-preview-off > /tmp/guided-off.txt
+          printf '1\n3\nq\n' | /tmp/mikey-guided-preview-off > /tmp/guided-off.txt
           grep -q 'SOON' /tmp/guided-off.txt
 
   debug-logic:
