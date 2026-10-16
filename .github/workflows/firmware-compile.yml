@@ -240,6 +240,14 @@ jobs:
           printf '1\nd\np\nh\nq\n' | /tmp/mikey-guided-preview > /tmp/guided-retry.txt
           grep -q 'TRY AGAIN' /tmp/guided-retry.txt
 
+      - name: Simulate Simon prediction retry and explanation in terminal
+        run: |
+          printf '5\np\nd\nd\np\np\np\nh\nq\n' | /tmp/mikey-guided-preview > /tmp/simon-guided-terminal.txt
+          grep -q 'TRY AGAIN' /tmp/simon-guided-terminal.txt
+          grep -q 'NEXT IS LIGHT 3' /tmp/simon-guided-terminal.txt
+          grep -q 'ORDER IS STORED' /tmp/simon-guided-terminal.txt
+          grep -q 'LEDs' /tmp/simon-guided-terminal.txt
+
       - name: Verify unflagged desktop build shows SOON
         run: |
           g++ -std=c++17 -Wall -Wextra -Werror \
