@@ -21,6 +21,7 @@ class FakeHardware final : public Hardware {
   bool retrySeen = false;
   bool sampleSeen = false;
   bool sumSevenSeen = false;
+  bool phantomPreRollSum = false;
   bool sumEightSeen = false;
   bool rollRecorded = false;
 
@@ -46,6 +47,7 @@ class FakeHardware final : public Hardware {
     if (strcmp(t, "TRY AGAIN") == 0) retrySeen = true;
     if (strcmp(t, "FIXED SAMPLE") == 0) sampleSeen = true;
     if (strcmp(t, "1 + 6 = 7") == 0) sumSevenSeen = true;
+    if (strcmp(t, "1 + 1 = 2") == 0) phantomPreRollSum = true;
     if (strcmp(t, "4 + 4 = 8") == 0) sumEightSeen = true;
     if (strcmp(t, "SUM 7 SEEN 1") == 0) rollRecorded = true;
   }
@@ -187,6 +189,7 @@ static void testRealDualPlayPath() {
   ctx.mode = ActivityMode::Play;
   activity.begin(ctx);
   assert(hw.frames == 1 && hw.randomCalls == 0);
+  assert(!hw.phantomPreRollSum); // A fresh session has not rolled.
   checkOff(hw);
   activity.handleInput(press()); // A second press while rolling is ignored.
   activity.handleInput(press());
