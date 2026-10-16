@@ -4,6 +4,7 @@
 #include "../core/InputEvent.h"
 #include "../hardware/Hardware.h"
 #include "BinaryValue.h"
+#include "BinaryGuidedSession.h"
 
 namespace mikey {
 
@@ -23,12 +24,17 @@ class BinaryActivity : public Activity {
 
  private:
   void renderFrame();
+  void renderGuidedFrame();
+  void showGuidedLeds();
+  static void bitsFor(uint8_t value, char out[5]);
   void renderBits();
   void showBitLeds();
   void binaryText(char out[5]) const;
 
   Hardware& hardware_;
   BinaryValue value_;
+  BinaryGuidedSession guided_;
+  bool guidedMode_ = false;
   bool exitRequested_ = false;
   bool dirty_ = true;
 };
