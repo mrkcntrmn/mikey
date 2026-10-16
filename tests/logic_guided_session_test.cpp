@@ -41,12 +41,14 @@ class FakeHardware final : public Hardware {
   int ledFrames = 0;
 };
 
+#if MIKEY_ENABLE_LOGIC_GUIDED_PREVIEW
 static InputFrame pressFrame() {
   InputFrame f;
   f.encoderShortPress = true;
   f.touchPress = true; // Must be one submit, not two.
   return f;
 }
+#endif
 
 static void testModeAvailabilityIndependence() {
   ActivityId ids[] = {ActivityId::Jackpot, ActivityId::Reaction, ActivityId::Simon,
