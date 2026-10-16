@@ -28,6 +28,50 @@ jobs:
       - name: Run Simon sequence tests
         run: /tmp/simon-sequence-test
 
+  simon-guided:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify default-OFF and direct-launch denial
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=0 \
+            -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=0 \
+            -DMIKEY_ENABLE_SIMON_GUIDED_PREVIEW=0 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities/ \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/simon_guided_session_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/SimonActivity.cpp \
+            -o /tmp/simon-guided-off
+          /tmp/simon-guided-off
+
+      - name: Verify independent Simon preview and PLAY regression
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=0 \
+            -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=0 \
+            -DMIKEY_ENABLE_SIMON_GUIDED_PREVIEW=1 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities/ \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/simon_guided_session_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/SimonActivity.cpp \
+            -o /tmp/simon-guided-only
+          /tmp/simon-guided-only
+
+      - name: Verify three-mode preview combination
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror \
+            -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 \
+            -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1 \
+            -DMIKEY_ENABLE_SIMON_GUIDED_PREVIEW=1 \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/activities/ \
+            -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
+            tests/simon_guided_session_test.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/SimonActivity.cpp \
+            -o /tmp/simon-guided-all
+          /tmp/simon-guided-all
+
   dice-logic:
     runs-on: ubuntu-latest
     steps:
@@ -151,11 +195,13 @@ jobs:
           g++ -std=c++17 -Wall -Wextra -Werror \
             -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 \
             -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1 \
+            -DMIKEY_ENABLE_SIMON_GUIDED_PREVIEW=1 \
             -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
             -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
             tests/guided_round_layout_test.cpp \
             firmware/mikey-tech-lab/MikeyTechLab/src/activities/BinaryActivity.cpp \
             firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/SimonActivity.cpp \
             -o /tmp/guided-display-layout
           /tmp/guided-display-layout
 
@@ -169,26 +215,38 @@ jobs:
           g++ -std=c++17 -Wall -Wextra -Werror \
             -DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 \
             -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1 \
+            -DMIKEY_ENABLE_SIMON_GUIDED_PREVIEW=1 \
             -I firmware/mikey-tech-lab/MikeyTechLab/src/activities \
             -I firmware/mikey-tech-lab/MikeyTechLab/src/core \
             tools/guided-lab-cli.cpp \
             firmware/mikey-tech-lab/MikeyTechLab/src/activities/BinaryActivity.cpp \
             firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/SimonActivity.cpp \
             -o /tmp/mikey-guided-preview
 
       - name: Smoke-test Binary and Logic LEARN and CHALLENGE navigation
         run: |
-          printf '1\nh\n2\nh\n3\nh\n4\nh\nq\n' | /tmp/mikey-guided-preview > /tmp/guided-screens.txt
+          printf '1\nh\n2\nh\n3\nh\n4\nh\n5\nh\n6\nh\nq\n' | /tmp/mikey-guided-preview > /tmp/guided-screens.txt
           grep -q 'BINARY LEARN' /tmp/guided-screens.txt
           grep -q 'BINARY QUIZ' /tmp/guided-screens.txt
           grep -q 'LOGIC LEARN' /tmp/guided-screens.txt
           grep -q 'LOGIC CHALLENGE' /tmp/guided-screens.txt
+          grep -q 'SIMON LEARN' /tmp/guided-screens.txt
+          grep -q 'SIMON CHALLENGE' /tmp/guided-screens.txt
           grep -q 'LEDs' /tmp/guided-screens.txt
 
       - name: Smoke-test wrong prediction displays retry instead of answer
         run: |
           printf '1\nd\np\nh\nq\n' | /tmp/mikey-guided-preview > /tmp/guided-retry.txt
           grep -q 'TRY AGAIN' /tmp/guided-retry.txt
+
+      - name: Simulate Simon prediction retry and explanation in terminal
+        run: |
+          printf '5\np\nd\nd\np\np\np\nh\nq\n' | /tmp/mikey-guided-preview > /tmp/simon-guided-terminal.txt
+          grep -q 'TRY AGAIN' /tmp/simon-guided-terminal.txt
+          grep -q 'NEXT IS LIGHT 3' /tmp/simon-guided-terminal.txt
+          grep -q 'ORDER IS STORED' /tmp/simon-guided-terminal.txt
+          grep -q 'LEDs' /tmp/simon-guided-terminal.txt
 
       - name: Verify unflagged desktop build shows SOON
         run: |
@@ -198,8 +256,9 @@ jobs:
             tools/guided-lab-cli.cpp \
             firmware/mikey-tech-lab/MikeyTechLab/src/activities/BinaryActivity.cpp \
             firmware/mikey-tech-lab/MikeyTechLab/src/activities/LogicActivity.cpp \
+            firmware/mikey-tech-lab/MikeyTechLab/src/activities/SimonActivity.cpp \
             -o /tmp/mikey-guided-preview-off
-          printf '1\n3\nq\n' | /tmp/mikey-guided-preview-off > /tmp/guided-off.txt
+          printf '1\n3\n5\nq\n' | /tmp/mikey-guided-preview-off > /tmp/guided-off.txt
           grep -q 'SOON' /tmp/guided-off.txt
 
   debug-logic:
@@ -291,6 +350,6 @@ jobs:
         run: |
           arduino-cli compile \
             --fqbn esp32:esp32:esp32s3 \
-            --build-property "compiler.cpp.extra_flags=-DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1" \
+            --build-property "compiler.cpp.extra_flags=-DMIKEY_ENABLE_BINARY_GUIDED_PREVIEW=1 -DMIKEY_ENABLE_LOGIC_GUIDED_PREVIEW=1 -DMIKEY_ENABLE_SIMON_GUIDED_PREVIEW=1" \
             firmware/mikey-tech-lab/MikeyTechLab
 

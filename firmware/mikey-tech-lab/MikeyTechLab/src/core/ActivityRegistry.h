@@ -21,6 +21,14 @@
 #error "MIKEY_ENABLE_LOGIC_GUIDED_PREVIEW must be 0 or 1"
 #endif
 
+// Simon guided pilot is independently disabled until physical acceptance.
+#ifndef MIKEY_ENABLE_SIMON_GUIDED_PREVIEW
+#define MIKEY_ENABLE_SIMON_GUIDED_PREVIEW 0
+#endif
+#if MIKEY_ENABLE_SIMON_GUIDED_PREVIEW != 0 && MIKEY_ENABLE_SIMON_GUIDED_PREVIEW != 1
+#error "MIKEY_ENABLE_SIMON_GUIDED_PREVIEW must be 0 or 1"
+#endif
+
 namespace mikey {
 
 struct ActivityDescriptor {
@@ -79,7 +87,6 @@ inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
   switch (activity) {
     case ActivityId::Jackpot:
     case ActivityId::Reaction:
-    case ActivityId::Simon:
     case ActivityId::Dice:
     case ActivityId::Debugging:
       return mode == ActivityMode::Play;
@@ -90,6 +97,10 @@ inline bool isModeAvailable(ActivityId activity, ActivityMode mode) {
     case ActivityId::Logic:
       return mode == ActivityMode::Play ||
              (MIKEY_ENABLE_LOGIC_GUIDED_PREVIEW &&
+              (mode == ActivityMode::Learn || mode == ActivityMode::Challenge));
+    case ActivityId::Simon:
+      return mode == ActivityMode::Play ||
+             (MIKEY_ENABLE_SIMON_GUIDED_PREVIEW &&
               (mode == ActivityMode::Learn || mode == ActivityMode::Challenge));
     default:
       return false;
