@@ -25,7 +25,7 @@ The model `DualDiceSession` handles validity, sums, completed-pair counting, per
 | LEARN | Can dice match? | YES | 4+4=8 | Doubles can happen |
 | LEARN | Can total be 1? | NO | 1+1=2 | Minimum total is 2 |
 | LEARN | Can total be 7? | YES | 3+4=7 | 3 plus 4 is 7 |
-| CHALLENGE | Must total be 7? | NO | 2+5=7 | Any total from 2 to 12 is possible |
+| CHALLENGE | Must total be 7? | NO | 2+4=6 | Other sums occur |
 | CHALLENGE | Can total be 12? | YES | 6+6=12 | 6 plus 6 is 12 |
 | CHALLENGE | Always even sum? | NO | 1+2=3 | 1 plus 2 is odd |
 | CHALLENGE | More ways for 7? | YES | 3+4=7 | 7 has six ordered pairs; 2 has one |
