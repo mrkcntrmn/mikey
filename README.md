@@ -98,6 +98,10 @@ mikey/
 - Do not hide mistakes; debugging is a first-class activity.
 - Hardware-specific claims must be verified before they are committed as facts.
 
+## Optional remote firmware updates (MIKEY-011)
+
+**Planning only; not installed or enabled.** The CrowPanel's accepted USB profile uses a `huge_app` **No OTA** partition scheme. The planned adult-controlled Wi-Fi upgrade path uses outbound HTTPS, authenticated/signed releases, and a qualified dual-slot OTA partition layout; it does **not** need Tailscale or a spare home computer. All seven PLAY activities must remain fully offline-capable and the accepted Jackpot baseline must remain unchanged. See [MIKEY-011 HTTPS OTA Plan](docs/MIKEY-011-HTTPS-OTA-PLAN.md) for board preflight, firmware-release security, canary testing and USB recovery gates.
+
 ## Documentation
 
 Start with [Vision](docs/VISION.md), [Learning Philosophy](docs/LEARNING-PHILOSOPHY.md), and the [Curriculum](docs/CURRICULUM.md). New games should follow [Activity Spec](docs/ACTIVITY-SPEC.md).
