@@ -378,6 +378,18 @@ Possible readiness evidence:
 - describes a bug as a mismatch between intended and actual behavior;
 - proposes a simple debugging test.
 
+## MIKEY-011 — Optional Direct HTTPS Firmware Updates
+
+**Status:** plan only (2026-10-22); no firmware, flash layout or cloud release has changed. This is an infrastructure workstream independent of MIKEY-010 learning assessment. See [MIKEY-011 HTTPS OTA Plan](MIKEY-011-HTTPS-OTA-PLAN.md).
+
+- **MIKEY-011A:** reconcile accepted 16 MB physical FQBN with generic CI FQBN, measure compiled image/installed partitions, source-control a qualified dual-slot OTA partition layout, and document USB rescue. Current accepted `huge_app` profile explicitly has **No OTA**.
+- **MIKEY-011B:** implement offline-safe, idle-only, signed HTTPS OTA client as a separate system service with failure-path tests; do not change activity logic.
+- **MIKEY-011C:** build a gated, reproducible, approved release-signing/publishing workflow; validate manifest, TLS and immutable host behavior before any device update.
+- **MIKEY-011D:** obtain explicit owner approval for one initial USB partition conversion and signed single-device Wi-Fi canary; physically test interrupted transfers, boot recovery and all seven game regressions.
+- **MIKEY-011E:** close release and recovery operations after device acceptance.
+
+**Hold:** No OTA-enabled firmware has been built, flashed or published; automatic rollback, device connectivity and the OTA hosting solution remain unverified. No Tailscale gateway, public inbound port, user account, child data, or always-on home machine is required for the chosen architecture.
+
 ## Later roadmap
 
 Only after Phase 1 is stable:
