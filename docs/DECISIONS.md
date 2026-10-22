@@ -70,3 +70,11 @@ fc1735a0e6c34bec0caf89e5f03eac8317549f5a
 **Decision:** Keep deterministic activity rules and session state in small hardware-independent models when they can be separated cleanly from rendering, timing, and physical I/O. Run those models in native CI tests in addition to compiling the Arduino firmware.
 
 **Reason:** Fast deterministic tests make educational behavior easier to verify, preserve the hardware-abstraction boundary, and reduce the amount of logic that can only be checked on the physical CrowPanel. Physical acceptance is still required for display geometry, touch/encoder behavior, LEDs, timing feel, and integrated regressions.
+
+## D-011 — Optional adult-approved HTTPS OTA without home gateway
+
+**Decision (2026-10-22, planning only):** Use ESP32-initiated outbound HTTPS firmware download for future remote Wi-Fi updates, not Tailscale subnet routing, an always-on home Linux host, or an ESP32 internet-facing upload server. Require approved signed images, authenticated release metadata, proper certificate validation, idle-only installation, exact board/partition compatibility, and physical USB rescue qualification. Preserve offline-first learning and do not touch the immutable MIKEY-002 baseline.
+
+**Reason:** Remote maintenance can be delivered using existing Wi-Fi and an approved read-only firmware origin without extra hardware; authorization, image authenticity and recovery must be designed independently of transport. Existing `huge_app` partition configuration has **No OTA**, so a verified USB-installed dual-slot partition table is an explicit prerequisite. See [MIKEY-011 Plan](MIKEY-011-HTTPS-OTA-PLAN.md).
+
+**Release gate:** Plan/documentation changes do not authorize firmware flashes, repartition, signing-key creation, secret provisioning, hosting publication, or live OTA deployment.
