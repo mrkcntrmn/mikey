@@ -6,6 +6,7 @@ on:
       - 'firmware/mikey-tech-lab/**'
       - 'tools/ota/**'
       - 'tests/test_ota_tools.py'
+      - 'tests/ota_policy_test.cpp'
       - 'docs/MIKEY-011-**'
       - '.github/workflows/ota-preflight.yml'
   push:
@@ -13,6 +14,7 @@ on:
       - 'firmware/mikey-tech-lab/**'
       - 'tools/ota/**'
       - 'tests/test_ota_tools.py'
+      - 'tests/ota_policy_test.cpp'
       - '.github/workflows/ota-preflight.yml'
 
 permissions:
@@ -30,6 +32,10 @@ jobs:
         run: python -m pip install 'cryptography>=42,<48'
       - name: Test layout and ephemeral-key signing
         run: PYTHONPATH=. python -m unittest discover -s tests -p test_ota_tools.py -v
+      - name: Compile and run hardware-independent update policy tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror tests/ota_policy_test.cpp -o /tmp/ota-policy-test
+          /tmp/ota-policy-test
       - name: Validate partition plan
         run: python tools/ota/preflight.py --partitions firmware/mikey-tech-lab/MikeyTechLab/partitions.csv
 
