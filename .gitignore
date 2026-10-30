@@ -1,0 +1,12 @@
+# Never commit local signing secrets or release credentials.
+*private*.pem
+*signing-key*.pem
+*.gpg
+*.key
+.env
+.env.*
+.venv/
+__pycache__/
+*.pyc
+release-output/
+# Public keys MAY be committed after fingerprint verification; private keys never.
