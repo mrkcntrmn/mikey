@@ -67,9 +67,9 @@ LEARN and CHALLENGE remain gated as SOON for all READY activities. MIKEY-005–0
 
 Long-press the encoder (~900 ms) to return Home from Mode Select or an active activity.
 
-## Remote Wi-Fi updates — planned, not implemented
+## Remote Wi-Fi updates — source preflight staged, client not implemented
 
-OTA is not currently present in `MikeyTechLab.ino`. The accepted physical `huge_app` flash layout does not include OTA slots, and current generic CI board flags are not a substitute for the accepted physical configuration. The proposed system-level HTTPS OTA implementation requires a qualified dual-slot partition table, signed releases, offline-safe network scheduling, single-device acceptance, demonstrated USB recovery and separate owner authorization before any flash or rollout. Read [MIKEY-011 HTTPS OTA Plan](../docs/MIKEY-011-HTTPS-OTA-PLAN.md). Keep the MIKEY-002 standalone Jackpot baseline immutable.
+OTA is not currently present in `MikeyTechLab.ino`. The accepted physical `huge_app` flash layout does not include OTA slots, and current generic CI board flags are not a substitute for the accepted physical configuration. Draft PR #15 adds a provisional sketch-local dual-slot `partitions.csv`, exact-target compile check and offline release tools. This is not approved for device flash. A complete system-level HTTPS OTA client still requires public-key verification, idle-only scheduling, physical acceptance, demonstrated USB recovery and separate owner authorization before any flash or rollout. Read [MIKEY-011 HTTPS OTA Plan](../docs/MIKEY-011-HTTPS-OTA-PLAN.md) and [Offline Preflight](../docs/MIKEY-011-OFFLINE-PREFLIGHT.md). Keep the MIKEY-002 standalone Jackpot baseline immutable.
 
 ## Boundary rule
 
