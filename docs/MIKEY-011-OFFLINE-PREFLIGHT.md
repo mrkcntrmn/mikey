@@ -6,7 +6,7 @@
 
 - Target device: Elecrow CrowPanel ESP32-S3, documented 16 MB flash / 8 MB OPI PSRAM.
 - Preserve all seven PLAY modes and the immutable MIKEY-002 standalone Jackpot sketch.
-- Adopt a **static Cloudflare R2 HTTPS distribution origin** (public read-only firmware assets), with GitHub for source and CI. No Cloudflare Worker, device login, inbound endpoint, VPN or dedicated home computer is needed for the first release.
+- Adopt **Cloudflare R2 + read-only Cloudflare Worker on a built-in `workers.dev` HTTPS hostname**, with GitHub for source and CI. No purchased domain, device login, inbound home endpoint, VPN or dedicated home computer is needed for the first release. A custom domain is optional later.
 - Firmware authenticity is verified on the ESP32 using the pinned RSA-2048 public key, *not* by trusting the download origin. Signed release metadata must also be verified before selecting firmware. Public downloads alone are not authorization.
 - Owner's public key **DER/SPKI SHA-256 fingerprint** (safe to commit):
   `f7e95de7bc1e316ea8e3121815738eaf522d8cff0c50f6d877103d065e8e2265`
@@ -62,16 +62,17 @@ python3 tools/ota/export_public_header.py \
 
 This outputs public-only source material. It is not currently required and must be reviewed before making the client active.
 
-## Cloudflare R2 delivery: private bucket staged, publishing NOT configured
+## Cloudflare R2 delivery: private bucket and source-only Worker staged, publishing NOT configured
 
 - **Cloudflare account readback 2026-10-30:** created Standard-class R2 bucket `mikey-tech-lab-ota`. Confirmed **0 objects**, **0 custom domains** and managed `r2.dev` domain **disabled**. Bucket is not publicly downloadable; no live firmware endpoint exists.
 - Planned immutable object paths: `releases/{channel}/{version}/MikeyTechLab-{version}-signed.bin` and `releases/{channel}/{version}/manifest-{version}.json`. Align the uploaded object paths with the URL inside the signed manifest.
-- Use an owner-controlled HTTPS custom domain for device downloads. Do not use development-only `r2.dev` as the production origin.
+- **No purchased domain is required.** The connected account already has a `workers.dev` subdomain. Deploying the separately reviewed read-only Worker `mikey-tech-lab-ota` will provide `https://mikey-tech-lab-ota.<account-subdomain>.workers.dev` (illustrative until deployment; not live today). An optional custom domain can later be added, subject to rollout/key migration controls. Do not enable the development-only R2-managed `r2.dev` endpoint for production.
+- Worker source: `cloudflare/ota-worker/src/index.mjs` and `wrangler.jsonc`; it serves GET/HEAD only for bounded `releases/{channel}/{version}/...` and `channels/{channel}/latest.json` paths. No upload, listing, deletes, credentials, or signing endpoint. Native `node --test` tests exercise the routes in CI.
 - Use a short-cache `{channel}/latest.json` discovery pointer if desired. This pointer is **untrusted input**; the device must verify signed manifest contents and reject older versions, mismatched board/layout/channel and unsigned images. Never flash based on the pointer alone.
 - Never overwrite a published versioned object. Enable storage protection/retention appropriate for the release process. Restrict write credentials to the owner's machine or separately authorized publishing environment.
 - HTTPS certificate *chain and hostname* must validate on the ESP32; do not use `setInsecure()`.
 - Any separate signature/manifest signing key rotation requires an explicit cross-signed or USB re-provisioning strategy. One key for the initial pilot is intentional.
-- The empty private R2 bucket was created through the connected Cloudflare account separately from this GitHub PR. **No** DNS records, custom domains, access tokens, firmware releases or public endpoints have been created.
+- The empty private R2 bucket was created through the connected Cloudflare account separately from this GitHub PR. Worker source is only staged **in GitHub**; no Worker has been deployed. **No** DNS records, custom domains, access tokens, firmware releases or public endpoints have been created.
 
 ## Hardware-only acceptance holds
 
