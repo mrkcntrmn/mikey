@@ -380,7 +380,7 @@ Possible readiness evidence:
 
 ## MIKEY-011 — Optional Direct HTTPS Firmware Updates
 
-**Status:** plan only (2026-10-22); no firmware, flash layout or cloud release has changed. This is an infrastructure workstream independent of MIKEY-010 learning assessment. See [MIKEY-011 HTTPS OTA Plan](MIKEY-011-HTTPS-OTA-PLAN.md).
+**Status:** draft source-only preflight staged 2026-10-30: provisional dual-slot partition CSV, CI compile, offline RSA signer/manifest verifier and negative tests. No physical flash, signed owner release, OTA client, or cloud deployment. This is an infrastructure workstream independent of MIKEY-010 learning assessment. See [MIKEY-011 HTTPS OTA Plan](MIKEY-011-HTTPS-OTA-PLAN.md) and [Offline Preflight](MIKEY-011-OFFLINE-PREFLIGHT.md).
 
 - **MIKEY-011A:** reconcile accepted 16 MB physical FQBN with generic CI FQBN, measure compiled image/installed partitions, source-control a qualified dual-slot OTA partition layout, and document USB rescue. Current accepted `huge_app` profile explicitly has **No OTA**.
 - **MIKEY-011B:** implement offline-safe, idle-only, signed HTTPS OTA client as a separate system service with failure-path tests; do not change activity logic.
