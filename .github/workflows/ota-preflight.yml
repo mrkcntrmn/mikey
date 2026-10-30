@@ -5,6 +5,7 @@ on:
     paths:
       - 'firmware/mikey-tech-lab/**'
       - 'tools/ota/**'
+      - 'cloudflare/ota-worker/**'
       - 'tests/test_ota_tools.py'
       - 'tests/ota_policy_test.cpp'
       - 'docs/MIKEY-011-**'
@@ -21,6 +22,16 @@ permissions:
   contents: read
 
 jobs:
+  worker-readonly-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test HTTPS gateway routing and R2 read-only behavior
+        run: node --test cloudflare/ota-worker/test/gateway.test.mjs
+
   policy-and-signing-tests:
     runs-on: ubuntu-latest
     steps:
