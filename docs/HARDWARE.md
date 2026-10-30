@@ -57,6 +57,12 @@ FQBN used for physical upload:
 esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi
 ```
 
+### OTA migration warning (MIKEY-011; plan only)
+
+The accepted `PartitionScheme=huge_app` is **No OTA**, so it cannot support direct HTTPS firmware installation as-is. The first OTA-capable image will require a **locally authorized USB flash of a verified dual-slot partition table** (including `otadata`, `ota_0`, and `ota_1`) and a separately qualified recovery process. The board is documented as 16 MB flash; independently inspect the actual device and check the **signed** app's compiled size before selecting partition offsets, slot sizes, or a replacement FQBN.
+
+Current source CI compiles `esp32:esp32:esp32s3` without the physically accepted `FlashSize=16M,PartitionScheme=huge_app,PSRAM=opi` options. This discrepancy is a mandatory preflight fix for the *new* OTA app configuration; retain the immutable standalone Jackpot baseline. Rollback is not guaranteed merely by selecting a dual-slot table: verify the bootloader and settings on the real board before claiming recovery without USB. See [MIKEY-011 Plan](MIKEY-011-HTTPS-OTA-PLAN.md).
+
 ### Pinned development dependencies
 
 The Jackpot baseline deliberately avoids LVGL and the external CST816D library. It needs only:

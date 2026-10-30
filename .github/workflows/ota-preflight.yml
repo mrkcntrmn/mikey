@@ -1,0 +1,111 @@
+name: MIKEY-011 OTA Preflight (NO RELEASE)
+
+on:
+  pull_request:
+    paths:
+      - 'firmware/mikey-tech-lab/**'
+      - 'tools/ota/**'
+      - 'cloudflare/ota-worker/**'
+      - 'tests/test_ota_tools.py'
+      - 'tests/ota_policy_test.cpp'
+      - 'docs/MIKEY-011-**'
+      - '.github/workflows/ota-preflight.yml'
+  push:
+    paths:
+      - 'firmware/mikey-tech-lab/**'
+      - 'tools/ota/**'
+      - 'tests/test_ota_tools.py'
+      - 'tests/ota_policy_test.cpp'
+      - '.github/workflows/ota-preflight.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  worker-live-smoke:
+    # Public-only GET/HEAD/PUT negative probes, no credentials or release uploads.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Cloudflare workers.dev HTTPS health and deny paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://mikey-tech-lab-ota.ilovepoker.workers.dev'
+          HEALTH=$(curl --silent --show-error --max-time 25 --retry 2 --proto '=https' --write-out '%{http_code}' --output /tmp/mikey-ota-health "$BASE/healthz")
+          test "$HEALTH" = "200"
+          grep -qx 'mikey-ota-gateway-ready' /tmp/mikey-ota-health
+          NO_FILE=$(curl --silent --show-error --max-time 25 --proto '=https' --write-out '%{http_code}' --output /dev/null "$BASE/releases/canary/0.1.1/MikeyTechLab-0.1.1-signed.bin")
+          test "$NO_FILE" = "404"
+          BLOCKED=$(curl --silent --show-error --max-time 25 --proto '=https' --request PUT --write-out '%{http_code}' --output /dev/null "$BASE/releases/canary/0.1.1/MikeyTechLab-0.1.1-signed.bin")
+          test "$BLOCKED" = "405"
+          echo "WORKERS_DEV_LIVE_SMOKE=PASS HEALTH=200 MISSING_RELEASE=404 PUT=405"
+
+  worker-readonly-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test HTTPS gateway routing and R2 read-only behavior
+        run: node --test cloudflare/ota-worker/test/gateway.test.mjs
+
+  policy-and-signing-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install cryptographic test dependency
+        run: python -m pip install 'cryptography>=42,<48'
+      - name: Test layout and ephemeral-key signing
+        run: PYTHONPATH=. python -m unittest discover -s tests -p test_ota_tools.py -v
+      - name: Compile and run hardware-independent update policy tests
+        run: |
+          g++ -std=c++17 -Wall -Wextra -Werror tests/ota_policy_test.cpp -o /tmp/ota-policy-test
+          /tmp/ota-policy-test
+      - name: Validate partition plan
+        run: python tools/ota/preflight.py --partitions firmware/mikey-tech-lab/MikeyTechLab/partitions.csv
+
+  exact-board-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/setup-arduino-cli@v2
+      - name: Install pinned toolchain
+        run: |
+          arduino-cli config init
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32@3.3.8
+          arduino-cli lib install 'LovyanGFX@1.2.26'
+          arduino-cli lib install 'Adafruit NeoPixel@1.15.1'
+      - name: Compile with physical flash/PSRAM and sketch-local partitions
+        run: |
+          mkdir -p "$RUNNER_TEMP/ota-build"
+          arduino-cli compile --fqbn 'esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=default,PSRAM=opi' \
+            --build-property upload.maximum_size=6291456 \
+            --output-dir "$RUNNER_TEMP/ota-build" \
+            firmware/mikey-tech-lab/MikeyTechLab
+      - name: Check actual image fits both slots with 20 percent reserve
+        run: |
+          BIN="$RUNNER_TEMP/ota-build/MikeyTechLab.ino.bin"
+          test -s "$BIN"
+          PART_BIN=$(find "$RUNNER_TEMP/ota-build" -maxdepth 1 -name "*.partitions.bin" -print -quit)
+          test -n "$PART_BIN"
+          test -s "$PART_BIN"
+          python3 tools/ota/preflight.py \
+            --partitions firmware/mikey-tech-lab/MikeyTechLab/partitions.csv \
+            --firmware "$BIN" \
+            --partition-bin "$PART_BIN"
+          sha256sum "$BIN"
+      - name: Upload unsigned CI build for OFFLINE-only inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: UNSIGNED-MIKEY-OTA-PREFLIGHT-DO-NOT-FLASH
+          path: ${{ runner.temp }}/ota-build/MikeyTechLab.ino.bin
+          retention-days: 7
+          if-no-files-found: error
+
+# Deliberately no release, no R2 write, no secrets, no deploy and no ESP32 upload.
