@@ -23,6 +23,7 @@
 - `firmware/mikey-tech-lab/MikeyTechLab/src/ota/OtaPolicy.h` and `tests/ota_policy_test.cpp`: source-only target/version/idle/verified-release policy with native tests; not yet connected to an OTA network client.
 - `tools/ota/export_public_header.py`: creates a C++ header from the owner's **PUBLIC-only PEM** later, verifying the pinned fingerprint; does not read the private key.
 - `.github/workflows/ota-preflight.yml`: exact 16 MB / OPI compile, offline test, unsigned CI artifact; no publish/signing secrets or firmware uploads to devices.
+- **Evidence 2026-10-30:** [Actions run 41129645155](https://github.com/mrkcntrmn/mikey/actions/runs/41129645155) passed all four jobs: Worker live-smoke, Worker unit tests, policy/signature tests, and exact-board compile. Built application `440,672 bytes`; proposed slot `6,291,456 bytes`; `COMPILED_PARTITIONS=MATCH`. This is source-only acceptance; device flash/rollback/UI behavior remains untested.
 
 Reference: https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/tools/bin_signing.py and https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/libraries/Update/src/Update.h and https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/libraries/Update/src/Updater_Signing.cpp
 
