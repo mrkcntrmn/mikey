@@ -53,7 +53,7 @@ class SigningTests(unittest.TestCase):
             serialization.Encoding.PEM, serialization.PublicFormat.SubjectPublicKeyInfo))
         self.fingerprint = sign_release.public_fingerprint(self.key.public_key())
         self.firmware = self.root / "firmware.bin"
-        self.firmware.write_bytes(b"\\xe9" + b"A" * 4095)
+        self.firmware.write_bytes(bytes([0xE9]) + b"A" * 4095)
         self.sign_args = argparse.Namespace(
             version="0.0.1", build_sha="a" * 40, channel="canary",
             origin="https://ota.example.invalid", firmware=str(self.firmware),
