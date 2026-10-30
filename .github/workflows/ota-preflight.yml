@@ -56,6 +56,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/ota-build"
           arduino-cli compile --fqbn 'esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=default,PSRAM=opi' \
+            --build-property upload.maximum_size=6291456 \
             --output-dir "$RUNNER_TEMP/ota-build" \
             firmware/mikey-tech-lab/MikeyTechLab
       - name: Check actual image fits both slots with 20 percent reserve
