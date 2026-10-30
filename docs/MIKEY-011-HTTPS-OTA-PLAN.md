@@ -1,6 +1,6 @@
 # MIKEY-011 — Remote Wi-Fi Firmware Updates (HTTPS OTA)
 
-**Status: PLAN ONLY — 2026-10-22.** No OTA-enabled image has been built, flashed, published, or physically accepted. This workstream does not change the accepted Core Seven PLAY firmware, the immutable MIKEY-002 Jackpot baseline, or MIKEY-010's learning-review priority.
+**Status: source-only preparation in draft PR #15 — updated 2026-10-30.** A provisional sketch-local partition CSV, offline release signer/verifier, negative tests and no-publish CI workflow are staged. No physical device has been flashed, no OTA client has been implemented, no signed owner release has been published, and no hardware acceptance has occurred. See [Offline Preflight](MIKEY-011-OFFLINE-PREFLIGHT.md). This workstream does not change the accepted Core Seven PLAY firmware, the immutable MIKEY-002 Jackpot baseline, or MIKEY-010's learning-review priority.
 
 ## Decision and scope
 
@@ -22,7 +22,7 @@ Maintainer approves tagged release
   → reports outcome on device (no remote personal telemetry)
 ```
 
-GitHub Actions is a *build/release system*, not the ESP32's OTA server. The first delivery origin may be immutable versioned GitHub Release assets **if a public download is acceptable**, or a low-cost object-store/CDN HTTPS origin. GitHub Actions ephemeral artifacts are **not** a permanent device download API. Do not select hosting or begin publication until the actual redirect, certificate, URL-stability, and access model is tested on the board. Public delivery alone is not authorization: it relies on device-enforced signing. No bearer token or private signing key may be shipped inside public firmware.
+GitHub Actions is a *build/release system*, not the ESP32's OTA server. The selected pilot delivery design is **static Cloudflare R2 over a validated HTTPS custom domain**, distributing public but signed immutable release objects; GitHub remains the build/CI host. GitHub Actions ephemeral artifacts are **not** a permanent device download API. Do not create resources or begin publication until URL, certificate, cache behavior and access model are verified; device acceptance remains required. Public delivery alone is not authorization: it relies on device-enforced signing. No bearer token or private signing key may be shipped inside public firmware.
 
 ## Repository-specific discovery / blocking issue
 
