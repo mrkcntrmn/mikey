@@ -5,6 +5,7 @@ No USB access, flashing, signing, network access, or secret handling.
 """
 import argparse
 import csv
+import struct
 from pathlib import Path
 
 FLASH_BYTES = 16 * 1024 * 1024
@@ -81,16 +82,51 @@ def validate(parts, firmware_size=None):
             "flash_bytes": FLASH_BYTES, "firmware_size": firmware_size}
 
 
+def check_compiled_partition_bin(path, expected):
+    """Verify the *built* ESP-IDF partition binary matches the authored CSV."""
+    data = Path(path).read_bytes()
+    actual = {}
+    for index in range(0, len(data) - 31, 32):
+        magic, kind, subtype, start, size, name_raw, flags = struct.unpack(
+            "<HBBII16sI", data[index:index + 32]
+        )
+        if magic == 0xFFFF:
+            break
+        # ESP-IDF digest marker (if included) is not a partition entry.
+        if magic == 0xEBEB:
+            break
+        if magic != 0x50AA:
+            raise PartitionError(f"unexpected compiled partition magic at {index}")
+        name = name_raw.split(bytes([0]), 1)[0].decode("ascii")
+        if name in actual:
+            raise PartitionError(f"duplicate compiled partition {name}")
+        actual[name] = (kind, subtype, start, size)
+    if set(actual) != set(expected):
+        raise PartitionError("compiled partition entries differ from CSV")
+    subtype_codes = {"nvs": 0x02, "otadata": 0x00, "phy_init": 0x01,
+                     "ota_0": 0x10, "ota_1": 0x11, "spiffs": 0x82}
+    for name, (kind, subtype, start, size) in expected.items():
+        actual_type = 0x00 if kind == "app" else 0x01
+        if actual[name] != (actual_type, subtype_codes[name], start, size):
+            raise PartitionError(f"{name}: compiled binary does not match source")
+    return True
+
+
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--partitions", type=Path, required=True)
     p.add_argument("--firmware", type=Path, help="Unsigned application .bin (optional)")
+    p.add_argument("--partition-bin", type=Path, help="Compiled partition .bin to verify against source")
     args = p.parse_args()
     size = args.firmware.stat().st_size if args.firmware else None
-    result = validate(load_partitions(args.partitions), size)
+    parts = load_partitions(args.partitions)
+    result = validate(parts, size)
+    if args.partition_bin:
+        check_compiled_partition_bin(args.partition_bin, parts)
     print(f"PARTITION_PREFLIGHT=PASS LAYOUT={result['layout_id']} "
           f"SLOT={result['slot_bytes']} FLASH={result['flash_bytes']} "
           f"UNSIGNED_BIN={size if size is not None else 'NOT_MEASURED'} "
+          f"COMPILED_PARTITIONS={'MATCH' if args.partition_bin else 'NOT_CHECKED'} "
           "DEVICE_ACCEPTANCE=PENDING")
 
 
