@@ -62,6 +62,9 @@ jobs:
         run: |
           BIN="$RUNNER_TEMP/ota-build/MikeyTechLab.ino.bin"
           test -s "$BIN"
+          PART_BIN=$(find "$RUNNER_TEMP/ota-build" -maxdepth 1 -name "*.partitions.bin" -print -quit)
+          test -n "$PART_BIN"
+          test -s "$PART_BIN"
           python3 tools/ota/preflight.py \
             --partitions firmware/mikey-tech-lab/MikeyTechLab/partitions.csv \
             --firmware "$BIN" \\
