@@ -22,6 +22,24 @@ permissions:
   contents: read
 
 jobs:
+  worker-live-smoke:
+    # Public-only GET/HEAD/PUT negative probes, no credentials or release uploads.
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate Cloudflare workers.dev HTTPS health and deny paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://mikey-tech-lab-ota.ilovepoker.workers.dev'
+          HEALTH=$(curl --silent --show-error --max-time 25 --retry 2 --proto '=https' --write-out '%{http_code}' --output /tmp/mikey-ota-health "$BASE/healthz")
+          test "$HEALTH" = "200"
+          grep -qx 'mikey-ota-gateway-ready' /tmp/mikey-ota-health
+          NO_FILE=$(curl --silent --show-error --max-time 25 --proto '=https' --write-out '%{http_code}' --output /dev/null "$BASE/releases/canary/0.1.1/MikeyTechLab-0.1.1-signed.bin")
+          test "$NO_FILE" = "404"
+          BLOCKED=$(curl --silent --show-error --max-time 25 --proto '=https' --request PUT --write-out '%{http_code}' --output /dev/null "$BASE/releases/canary/0.1.1/MikeyTechLab-0.1.1-signed.bin")
+          test "$BLOCKED" = "405"
+          echo "WORKERS_DEV_LIVE_SMOKE=PASS HEALTH=200 MISSING_RELEASE=404 PUT=405"
+
   worker-readonly-tests:
     runs-on: ubuntu-latest
     steps:
