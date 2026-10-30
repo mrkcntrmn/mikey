@@ -24,7 +24,9 @@
 - `tools/ota/export_public_header.py`: creates a C++ header from the owner's **PUBLIC-only PEM** later, verifying the pinned fingerprint; does not read the private key.
 - `.github/workflows/ota-preflight.yml`: exact 16 MB / OPI compile, offline test, unsigned CI artifact; no publish/signing secrets or firmware uploads to devices.
 
-Reference: https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/tools/bin_signing.py and https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/libraries/Update/src/Update.h
+Reference: https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/tools/bin_signing.py and https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/libraries/Update/src/Update.h and https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/libraries/Update/src/Updater_Signing.cpp
+
+**Pinned-core caveat:** the Arduino-ESP32 3.3.8 signed Update verifier is guarded by `UPDATE_SIGN`; compile the future ESP32 application with that flag enabled and fail its build if it is absent. Calling `Update.installSignature(&verifier)` before `Update.begin(...)` is required. The existing seven-game app has not yet received that runtime integration. `bin_signing.py` uses RSA-PSS with SHA-256 and MAX_LENGTH salt, appending a zero-padded 512-byte trailer. Firmware compilation alone is NOT proof of an active signature enforcement path.
 
 ## Preparing a release later (not needed now)
 
@@ -62,17 +64,17 @@ python3 tools/ota/export_public_header.py \
 
 This outputs public-only source material. It is not currently required and must be reviewed before making the client active.
 
-## Cloudflare R2 delivery: private bucket and source-only Worker staged, publishing NOT configured
+## Cloudflare R2 delivery: read-only Worker deployed, firmware publication STILL DISABLED
 
-- **Cloudflare account readback 2026-10-30:** created Standard-class R2 bucket `mikey-tech-lab-ota`. Confirmed **0 objects**, **0 custom domains** and managed `r2.dev` domain **disabled**. Bucket is not publicly downloadable; no live firmware endpoint exists.
+- **Cloudflare account readback 2026-10-30:** created Standard-class R2 bucket `mikey-tech-lab-ota`. Confirmed **0 objects**, **0 custom domains** and managed `r2.dev` domain **disabled**. The R2 bucket remains private, but the deployed Worker now exposes a restricted read-only public gateway. There are currently no firmware objects to download.
 - Planned immutable object paths: `releases/{channel}/{version}/MikeyTechLab-{version}-signed.bin` and `releases/{channel}/{version}/manifest-{version}.json`. Align the uploaded object paths with the URL inside the signed manifest.
-- **No purchased domain is required.** The connected account already has a `workers.dev` subdomain. Deploying the separately reviewed read-only Worker `mikey-tech-lab-ota` will provide `https://mikey-tech-lab-ota.<account-subdomain>.workers.dev` (illustrative until deployment; not live today). An optional custom domain can later be added, subject to rollout/key migration controls. Do not enable the development-only R2-managed `r2.dev` endpoint for production.
+- **No purchased domain is required.** The connected account's `workers.dev` subdomain is `ilovepoker`. Cloudflare API readback confirms Worker `mikey-tech-lab-ota` is deployed with `workers.dev` enabled, preview URLs disabled and an `OTA_ASSETS` R2 binding. Its assigned HTTPS hostname is `https://mikey-tech-lab-ota.ilovepoker.workers.dev`. External HTTP health/download-denial verification from a public GitHub runner is an explicit CI gate. An optional custom domain can later be added, subject to rollout/key migration controls. Do not enable the development-only R2-managed `r2.dev` endpoint for production.
 - Worker source: `cloudflare/ota-worker/src/index.mjs` and `wrangler.jsonc`; it serves GET/HEAD only for bounded `releases/{channel}/{version}/...` and `channels/{channel}/latest.json` paths. No upload, listing, deletes, credentials, or signing endpoint. Native `node --test` tests exercise the routes in CI.
 - Use a short-cache `{channel}/latest.json` discovery pointer if desired. This pointer is **untrusted input**; the device must verify signed manifest contents and reject older versions, mismatched board/layout/channel and unsigned images. Never flash based on the pointer alone.
 - Never overwrite a published versioned object. Enable storage protection/retention appropriate for the release process. Restrict write credentials to the owner's machine or separately authorized publishing environment.
 - HTTPS certificate *chain and hostname* must validate on the ESP32; do not use `setInsecure()`.
 - Any separate signature/manifest signing key rotation requires an explicit cross-signed or USB re-provisioning strategy. One key for the initial pilot is intentional.
-- The empty private R2 bucket was created through the connected Cloudflare account separately from this GitHub PR. Worker source is only staged **in GitHub**; no Worker has been deployed. **No** DNS records, custom domains, access tokens, firmware releases or public endpoints have been created.
+- The empty private R2 bucket was created through the connected Cloudflare account separately from this GitHub PR. Worker source was uploaded directly to Cloudflare (source blob `ccecdd8989281ce593c903a2725db2f5d62e2006`) on 2026-10-30 and the built-in HTTPS route enabled. **No** custom domains, DNS records, release objects, signing keys, publishing credentials or firmware update triggers were created. This publicly exposes an empty read-only download gateway, NOT a device update service.
 
 ## Hardware-only acceptance holds
 
