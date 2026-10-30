@@ -6,7 +6,7 @@ source change; do not write the private PEM into the repository.
 """
 import argparse
 from pathlib import Path
-from tools.ota.sign_release import EXPECTED_FINGERPRINT, load_public
+from sign_release import EXPECTED_FINGERPRINT, load_public
 
 def main():
     p = argparse.ArgumentParser(description=__doc__)
