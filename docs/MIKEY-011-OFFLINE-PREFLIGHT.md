@@ -52,15 +52,15 @@ Reference: https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/tools
 
 **Current hold:** Do not run signing or publish commands yet; no OTA client has been integrated into the ESP32 application and no physical recovery has been qualified.
 
-## Planned Cloudflare R2 publishing (NOT configured)
+## Cloudflare R2 delivery: private bucket staged, publishing NOT configured
 
-- Dedicated small R2 bucket, immutable paths: `releases/{channel}/{version}/MikeyTechLab-{version}-signed.bin` and `releases/{channel}/{version}/manifest-{version}.json`. Align the uploaded object paths with the URL inside the signed manifest.
+- **Cloudflare account readback 2026-10-30:** created Standard-class R2 bucket `mikey-tech-lab-ota`. Confirmed **0 objects**, **0 custom domains** and managed `r2.dev` domain **disabled**. Bucket is not publicly downloadable; no live firmware endpoint exists.\n- Planned immutable object paths: `releases/{channel}/{version}/MikeyTechLab-{version}-signed.bin` and `releases/{channel}/{version}/manifest-{version}.json`. Align the uploaded object paths with the URL inside the signed manifest.
 - Use an owner-controlled HTTPS custom domain for device downloads. Do not use development-only `r2.dev` as the production origin.
 - Use a short-cache `{channel}/latest.json` discovery pointer if desired. This pointer is **untrusted input**; the device must verify signed manifest contents and reject older versions, mismatched board/layout/channel and unsigned images. Never flash based on the pointer alone.
 - Never overwrite a published versioned object. Enable storage protection/retention appropriate for the release process. Restrict write credentials to the owner's machine or separately authorized publishing environment.
 - HTTPS certificate *chain and hostname* must validate on the ESP32; do not use `setInsecure()`.
 - Any separate signature/manifest signing key rotation requires an explicit cross-signed or USB re-provisioning strategy. One key for the initial pilot is intentional.
-- No Cloudflare resources, DNS records, buckets, tokens or release objects are created by this PR.
+- The empty private R2 bucket was created through the connected Cloudflare account separately from this GitHub PR. **No** DNS records, custom domains, access tokens, firmware releases or public endpoints have been created.
 
 ## Hardware-only acceptance holds
 
