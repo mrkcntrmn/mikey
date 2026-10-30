@@ -1,0 +1,71 @@
+name: MIKEY-011 OTA Preflight (NO RELEASE)
+
+on:
+  pull_request:
+    paths:
+      - 'firmware/mikey-tech-lab/**'
+      - 'tools/ota/**'
+      - 'tests/test_ota_tools.py'
+      - 'docs/MIKEY-011-**'
+      - '.github/workflows/ota-preflight.yml'
+  push:
+    paths:
+      - 'firmware/mikey-tech-lab/**'
+      - 'tools/ota/**'
+      - 'tests/test_ota_tools.py'
+      - '.github/workflows/ota-preflight.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  policy-and-signing-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install cryptographic test dependency
+        run: python -m pip install 'cryptography>=42,<48'
+      - name: Test layout and ephemeral-key signing
+        run: PYTHONPATH=. python -m unittest discover -s tests -p test_ota_tools.py -v
+      - name: Validate partition plan
+        run: python tools/ota/preflight.py --partitions firmware/mikey-tech-lab/MikeyTechLab/partitions.csv
+
+  exact-board-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/setup-arduino-cli@v2
+      - name: Install pinned toolchain
+        run: |
+          arduino-cli config init
+          arduino-cli config add board_manager.additional_urls https://espressif.github.io/arduino-esp32/package_esp32_index.json
+          arduino-cli core update-index
+          arduino-cli core install esp32:esp32@3.3.8
+          arduino-cli lib install 'LovyanGFX@1.2.26'
+          arduino-cli lib install 'Adafruit NeoPixel@1.15.1'
+      - name: Compile with physical flash/PSRAM and sketch-local partitions
+        run: |
+          mkdir -p "$RUNNER_TEMP/ota-build"
+          arduino-cli compile --fqbn 'esp32:esp32:esp32s3:FlashSize=16M,PartitionScheme=default,PSRAM=opi' \
+            --output-dir "$RUNNER_TEMP/ota-build" \
+            firmware/mikey-tech-lab/MikeyTechLab
+      - name: Check actual image fits both slots with 20 percent reserve
+        run: |
+          BIN="$RUNNER_TEMP/ota-build/MikeyTechLab.ino.bin"
+          test -s "$BIN"
+          python3 tools/ota/preflight.py \
+            --partitions firmware/mikey-tech-lab/MikeyTechLab/partitions.csv \
+            --firmware "$BIN"
+          sha256sum "$BIN"
+      - name: Upload unsigned CI build for OFFLINE-only inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: UNSIGNED-MIKEY-OTA-PREFLIGHT-DO-NOT-FLASH
+          path: ${{ runner.temp }}/ota-build/MikeyTechLab.ino.bin
+          retention-days: 7
+          if-no-files-found: error
+
+# Deliberately no release, no R2 write, no secrets, no deploy and no ESP32 upload.
