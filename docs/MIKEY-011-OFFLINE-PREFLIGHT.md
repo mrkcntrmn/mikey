@@ -19,7 +19,7 @@
 - `firmware/mikey-tech-lab/MikeyTechLab/partitions.csv`: **provisional**, dual 6 MiB OTA slots; 16 MB total. Arduino picks a sketch-local `partitions.csv` for builds. Adding this table to a build changes partition allocation but does not change a device unless flashed.
 - `tools/ota/preflight.py`: checks partition inventory, offsets, alignment, overlaps, flash bounds and +512-byte signature trailer with 20% growth allowance.
 - `tools/ota/sign_release.py`: **offline-only** RSA-2048/SHA-256 RSA-PSS release packager, signed metadata and verifier. Matches the 512-byte padded trailer produced by Arduino-ESP32 **3.3.8** `bin_signing.py`. Requires Python `cryptography` package. No network calls.
-- `tests/test_ota_tools.py`: ephemeral key tests, never the owner's key.
+- `tests/test_ota_tools.py`: ephemeral key tests, never the owner's key.\n- `firmware/mikey-tech-lab/MikeyTechLab/src/ota/OtaPolicy.h` and `tests/ota_policy_test.cpp`: source-only target/version/idle/verified-release policy with native tests; not yet connected to an OTA network client.\n- `tools/ota/export_public_header.py`: creates a C++ header from the owner's **PUBLIC-only PEM** later, verifying the pinned fingerprint; does not read the private key.
 - `.github/workflows/ota-preflight.yml`: exact 16 MB / OPI compile, offline test, unsigned CI artifact; no publish/signing secrets or firmware uploads to devices.
 
 Reference: https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/tools/bin_signing.py and https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/libraries/Update/src/Update.h
@@ -50,7 +50,9 @@ Reference: https://raw.githubusercontent.com/espressif/arduino-esp32/3.3.8/tools
    ```
 6. Lock and unmount the USB vault immediately afterward. Keep the private signing key offline. This script never uploads to Cloudflare.
 
-**Current hold:** Do not run signing or publish commands yet; no OTA client has been integrated into the ESP32 application and no physical recovery has been qualified.
+**Current hold:** Do not run signing or publish commands yet; no OTA client has been integrated into the ESP32 application and no physical recovery has been qualified. When ready to embed only the PUBLIC key (ESP32 not needed for this step), run from repo root after temporarily unlocking the USB:\n\n```bash\npython3 tools/ota/export_public_header.py \
+  --public-key /mnt/mikey-vault/public/ota-signing-rsa2048.pub.pem \
+  --output firmware/mikey-tech-lab/MikeyTechLab/src/ota/ota_public_key.h\n```\n\nThis outputs public-only source material. It is not currently required and must be reviewed before making the client active.
 
 ## Cloudflare R2 delivery: private bucket staged, publishing NOT configured
 
