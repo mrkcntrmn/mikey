@@ -79,7 +79,7 @@ jobs:
           test -s "$PART_BIN"
           python3 tools/ota/preflight.py \
             --partitions firmware/mikey-tech-lab/MikeyTechLab/partitions.csv \
-            --firmware "$BIN" \\
+            --firmware "$BIN" \
             --partition-bin "$PART_BIN"
           sha256sum "$BIN"
       - name: Upload unsigned CI build for OFFLINE-only inspection
