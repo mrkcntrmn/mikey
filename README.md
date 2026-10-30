@@ -100,7 +100,7 @@ mikey/
 
 ## Optional remote firmware updates (MIKEY-011)
 
-**Planning only; not installed or enabled.** The CrowPanel's accepted USB profile uses a `huge_app` **No OTA** partition scheme. The planned adult-controlled Wi-Fi upgrade path uses outbound HTTPS, authenticated/signed releases, and a qualified dual-slot OTA partition layout; it does **not** need Tailscale or a spare home computer. All seven PLAY activities must remain fully offline-capable and the accepted Jackpot baseline must remain unchanged. See [MIKEY-011 HTTPS OTA Plan](docs/MIKEY-011-HTTPS-OTA-PLAN.md) for board preflight, firmware-release security, canary testing and USB recovery gates.
+**Source-only OTA preflight staged in draft PR #15; no OTA client installed or enabled.** The CrowPanel's accepted USB profile uses a `huge_app` **No OTA** partition scheme. The planned adult-controlled Wi-Fi upgrade path uses outbound HTTPS, authenticated/signed releases, and a qualified dual-slot OTA partition layout; it does **not** need Tailscale or a spare home computer. All seven PLAY activities must remain fully offline-capable and the accepted Jackpot baseline must remain unchanged. See [MIKEY-011 HTTPS OTA Plan](docs/MIKEY-011-HTTPS-OTA-PLAN.md) and [Offline Preflight](docs/MIKEY-011-OFFLINE-PREFLIGHT.md) for partition sizing, signing tools, Cloudflare distribution, recovery gates and tests.
 
 ## Documentation
 
