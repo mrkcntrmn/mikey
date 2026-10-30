@@ -22,7 +22,7 @@ Maintainer approves tagged release
   → reports outcome on device (no remote personal telemetry)
 ```
 
-GitHub Actions is a *build/release system*, not the ESP32's OTA server. The selected pilot delivery design is **static Cloudflare R2 over a validated HTTPS custom domain**, distributing public but signed immutable release objects; GitHub remains the build/CI host. GitHub Actions ephemeral artifacts are **not** a permanent device download API. Do not create resources or begin publication until URL, certificate, cache behavior and access model are verified; device acceptance remains required. Public delivery alone is not authorization: it relies on device-enforced signing. No bearer token or private signing key may be shipped inside public firmware.
+GitHub Actions is a *build/release system*, not the ESP32's OTA server. The selected pilot delivery design is **Cloudflare R2 exposed through a restricted, GET/HEAD-only Worker on a built-in `workers.dev` HTTPS domain**, distributing public but signed immutable release objects; GitHub remains the build/CI host. GitHub Actions ephemeral artifacts are **not** a permanent device download API. The private R2 bucket has been created empty, and Worker source is staged in draft PR #15 but **not deployed**. No purchased domain is required. Do not begin publication until Worker URLs, certificate, cache behavior and access model are verified; device acceptance remains required. Public delivery alone is not authorization: it relies on device-enforced signing. No bearer token or private signing key may be shipped inside public firmware.
 
 ## Repository-specific discovery / blocking issue
 
